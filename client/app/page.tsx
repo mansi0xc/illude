@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Zap, BookOpen, Users, ArrowRight, Play, Star } from "lucide-react"
 import RotatingCards from "@/components/ui/rotating-cards"
+import { CyberCard } from "@/components/ui/cyber-card"
 
 export default function HomePage() {
   return (
@@ -113,42 +114,62 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
-                  <Sparkles className="w-6 h-6 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Real-time Generation</h3>
-                <p className="text-gray-400 leading-relaxed">
-                  Watch your story unfold instantly as the AI crafts compelling narratives based on your prompts and
-                  directions.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
-                  <Users className="w-6 h-6 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Character Development</h3>
-                <p className="text-gray-400 leading-relaxed">
-                  Create rich, complex characters that evolve throughout your story with consistent personalities and
-                  motivations.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
-                  <BookOpen className="w-6 h-6 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Interactive Control</h3>
-                <p className="text-gray-400 leading-relaxed">
-                  Guide the narrative direction with your creative input while the AI handles the intricate storytelling
-                  details.
-                </p>
-              </CardContent>
-            </Card>
+            <CyberCard 
+              variant="feature"
+              title="AI POWER"
+              subtitle="NEXT-GEN STORYTELLING"
+            >
+              <Card className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
+                <CardContent className="p-8">
+                  <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
+                    <Sparkles className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Real-time Generation</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Watch your story unfold instantly as the AI crafts compelling narratives based on your prompts and
+                    directions.
+                  </p>
+                </CardContent>
+              </Card>
+            </CyberCard>
+            
+            <CyberCard 
+              variant="character"
+              title="CHARACTERS"
+              subtitle="DYNAMIC PERSONALITIES"
+            >
+              <Card className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
+                <CardContent className="p-8">
+                  <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
+                    <Users className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Character Development</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Create rich, complex characters that evolve throughout your story with consistent personalities and
+                    motivations.
+                  </p>
+                </CardContent>
+              </Card>
+            </CyberCard>
+            
+            <CyberCard 
+              variant="feature"
+              title="CONTROL"
+              subtitle="INTERACTIVE EXPERIENCE"
+            >
+              <Card className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
+                <CardContent className="p-8">
+                  <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
+                    <BookOpen className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Interactive Control</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Guide the narrative direction with your creative input while the AI handles the intricate storytelling
+                    details.
+                  </p>
+                </CardContent>
+              </Card>
+            </CyberCard>
           </div>
           
           {/* Quick Navigation */}
@@ -156,27 +177,39 @@ export default function HomePage() {
             <h3 className="text-2xl font-bold mb-8 bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">Quick Start</h3>
             <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <a href="/story-generator" className="block">
-                <Card className="bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-emerald-500/30 transition-colors">
-                      <Play className="w-6 h-6 text-emerald-400" />
-                    </div>
-                    <h4 className="text-lg font-semibold mb-2 group-hover:text-emerald-400 transition-colors">Create New Story</h4>
-                    <p className="text-gray-400 text-sm">Start crafting your epic narrative</p>
-                  </CardContent>
-                </Card>
+                <CyberCard 
+                  variant="feature"
+                  title="CREATE"
+                  subtitle="NEW ADVENTURE"
+                >
+                  <Card className="bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-emerald-500/30 transition-colors">
+                        <Play className="w-6 h-6 text-emerald-400" />
+                      </div>
+                      <h4 className="text-lg font-semibold mb-2 group-hover:text-emerald-400 transition-colors">Create New Story</h4>
+                      <p className="text-gray-400 text-sm">Start crafting your epic narrative</p>
+                    </CardContent>
+                  </Card>
+                </CyberCard>
               </a>
               
               <a href="/stories" className="block">
-                <Card className="bg-blue-500/5 border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 group cursor-pointer">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-blue-500/30 transition-colors">
-                      <BookOpen className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <h4 className="text-lg font-semibold mb-2 group-hover:text-blue-400 transition-colors">View My Stories</h4>
-                    <p className="text-gray-400 text-sm">Continue your existing adventures</p>
-                  </CardContent>
-                </Card>
+                <CyberCard 
+                  variant="story"
+                  title="STORIES"
+                  subtitle="YOUR COLLECTION"
+                >
+                  <Card className="bg-blue-500/5 border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 group cursor-pointer">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-blue-500/30 transition-colors">
+                        <BookOpen className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <h4 className="text-lg font-semibold mb-2 group-hover:text-blue-400 transition-colors">View My Stories</h4>
+                      <p className="text-gray-400 text-sm">Continue your existing adventures</p>
+                    </CardContent>
+                  </Card>
+                </CyberCard>
               </a>
             </div>
           </div>
@@ -229,50 +262,63 @@ export default function HomePage() {
             <h2 className="text-4xl font-bold mb-4">What Creators Say</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardContent className="p-8">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-emerald-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-6 italic">
-                  "Illude has revolutionized my creative process. The AI understands my vision and helps bring stories
-                  to life in ways I never imagined."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-black font-semibold mr-3">
-                    S
+            <CyberCard 
+              variant="testimonial"
+              title="REVIEW"
+              subtitle="5 STAR RATING"
+            >
+              <Card className="bg-gray-900/50 border-gray-800">
+                <CardContent className="p-8">
+                  <div className="flex mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-emerald-400 fill-current" />
+                    ))}
                   </div>
-                  <div>
-                    <p className="font-semibold">Sarah Chen</p>
-                    <p className="text-gray-400 text-sm">Fantasy Author</p>
+                  <p className="text-gray-300 mb-6 italic">
+                    "Illude has revolutionized my creative process. The AI understands my vision and helps bring stories
+                    to life in ways I never imagined."
+                  </p>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-black font-semibold mr-3">
+                      S
+                    </div>
+                    <div>
+                      <p className="font-semibold">Sarah Chen</p>
+                      <p className="text-gray-400 text-sm">Fantasy Author</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardContent className="p-8">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-emerald-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-6 italic">
-                  "The interactive storytelling experience is incredible. It's like having a co-writer who never runs
-                  out of creative ideas."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-black font-semibold mr-3">
-                    M
+                </CardContent>
+              </Card>
+            </CyberCard>
+            
+            <CyberCard 
+              variant="testimonial"
+              title="REVIEW"
+              subtitle="5 STAR RATING"
+            >
+              <Card className="bg-gray-900/50 border-gray-800">
+                <CardContent className="p-8">
+                  <div className="flex mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-emerald-400 fill-current" />
+                    ))}
                   </div>
-                  <div>
-                    <p className="font-semibold">Marcus Rodriguez</p>
-                    <p className="text-gray-400 text-sm">Screenwriter</p>
+                  <p className="text-gray-300 mb-6 italic">
+                    "The interactive storytelling experience is incredible. It's like having a co-writer who never runs
+                    out of creative ideas."
+                  </p>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-black font-semibold mr-3">
+                      M
+                    </div>
+                    <div>
+                      <p className="font-semibold">Marcus Rodriguez</p>
+                      <p className="text-gray-400 text-sm">Screenwriter</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </CyberCard>
           </div>
         </div>
       </section>
