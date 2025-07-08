@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=My+Soul&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -174,5 +175,54 @@
     background-color: #10b981 !important; /* emerald-500 */
     box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.37) !important;
     color: #000000 !important; /* black text on emerald bg */
+  }
+  
+  /* Chapter Heading Styles */
+  .prose .whitespace-pre-wrap {
+    line-height: 1.8;
+  }
+  
+  .prose .whitespace-pre-wrap::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: -9999px;
+  }
+  
+  /* Style lines that start with ## as chapter headings */
+  .story-content {
+    white-space: pre-wrap;
+    line-height: 1.8;
+  }
+  
+  .story-content .chapter-heading {
+    font-family: 'My Soul', cursive !important;
+    font-size: 2rem !important;
+    font-weight: 400 !important;
+    color: #34d399 !important; /* emerald-400 */
+    margin: 2.5rem 0 1.5rem 0 !important;
+    display: block !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.02em !important;
+    text-shadow: 0 0 15px rgba(52, 211, 153, 0.4) !important;
+    background: linear-gradient(135deg, #34d399, #10b981) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    position: relative !important;
+    transform: none !important;
+  }
+  
+  .story-content .chapter-heading::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 70%;
+    background: linear-gradient(to bottom, #34d399, #10b981);
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
   }
 }

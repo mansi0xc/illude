@@ -296,8 +296,23 @@ export default function StoryReaderPage() {
               </CardHeader>
               <CardContent>
                 <div className="prose prose-invert prose-emerald max-w-none">
-                  <div className="text-gray-200 leading-relaxed whitespace-pre-wrap">
-                    {chapter.content}
+                  <div className="text-gray-200 leading-relaxed story-content">
+                    {chapter.content.split('\n').map((line, lineIndex) => {
+                      // Check if line starts with ##
+                      if (line.trim().startsWith('## ')) {
+                        return (
+                          <div key={lineIndex} className="chapter-heading">
+                            {line.trim().replace(/^## /, '')}
+                          </div>
+                        )
+                      }
+                      // Regular line
+                      return (
+                        <div key={lineIndex}>
+                          {line || '\u00A0'} {/* Non-breaking space for empty lines */}
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
 
