@@ -49,7 +49,12 @@ interface StoryData {
   plot: string
   conflict: string
   chapters: Chapter[]
-  memory: any
+  memory: {
+    plotPoints: string[];
+    conflicts: string[];
+    characterArcs: { characterName: string; currentState: string; developments: string[] }[];
+    [key: string]: unknown;
+  }
   status: 'draft' | 'active' | 'completed' | 'paused'
   lastUpdated: string
   createdAt: string
@@ -149,7 +154,7 @@ export default function StoryReaderPage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Story Not Found</h3>
               <p className="text-gray-400 mb-8">
-                This story doesn't exist or has been removed.
+                This story doesn&apos;t exist or has been removed.
               </p>
               <Link href="/stories">
                 <Button size="lg">

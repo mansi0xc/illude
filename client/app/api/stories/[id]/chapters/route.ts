@@ -333,7 +333,7 @@ Please provide a JSON response with:
       ],
       characterArcs: story.memory.characterArcs.map((arc: CharacterArc) => {
         const development = analysisData.characterDevelopments?.find(
-          (dev: any) => dev.character === arc.characterName
+          (dev: { character: string; development: string }) => dev.character === arc.characterName
         )
         if (development) {
           return {

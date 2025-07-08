@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, BookOpen, Users, Eye, Trash2, Plus, ArrowLeft, Clock, FileText } from "lucide-react"
+import { Sparkles, BookOpen, Eye, Trash2, Plus, ArrowLeft, Clock, FileText } from "lucide-react"
 import Link from "next/link"
 
 interface StoryPreview {
@@ -14,7 +14,7 @@ interface StoryPreview {
   status: 'draft' | 'active' | 'completed' | 'paused'
   lastUpdated: string
   createdAt: string
-  chapters: any[]
+  chapters: { chapterNumber: number; content: string }[]
 }
 
 export default function StoriesPage() {

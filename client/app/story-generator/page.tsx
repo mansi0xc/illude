@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -35,7 +35,7 @@ interface Story {
   conflict: string
 }
 
-export default function StoryGenerator() {
+function StoryGeneratorContent() {
   const searchParams = useSearchParams()
   const storyId = searchParams.get('storyId')
   
@@ -480,7 +480,7 @@ export default function StoryGenerator() {
                     </div>
                     <h3 className="text-lg font-medium text-gray-300 mb-2">Your Story Awaits</h3>
                     <p className="text-gray-400 max-w-sm mb-6">
-                      Fill in the story details and click "Generate First Chapter" to see your narrative come to life.
+                      Fill in the story details and click &ldquo;Generate First Chapter&rdquo; to see your narrative come to life.
                     </p>
                     
                     <div className="flex gap-3">
@@ -528,5 +528,22 @@ export default function StoryGenerator() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function StoryGenerator() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <Sparkles className="w-8 h-8 text-emerald-400 animate-spin" />
+          </div>
+          <p className="text-gray-400">Loading story generator...</p>
+        </div>
+      </div>
+    }>
+      <StoryGeneratorContent />
+    </Suspense>
   )
 } 

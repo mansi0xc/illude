@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Zap, BookOpen, Users, ArrowRight, Play, Star } from "lucide-react"
+import { Sparkles, Zap, BookOpen, Users, Play, Star } from "lucide-react"
 import RotatingCards from "@/components/ui/rotating-cards"
 import { CyberCard } from "@/components/ui/cyber-card"
 
@@ -25,9 +25,9 @@ export default function HomePage() {
               <a href="#how-it-works" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 How it Works
               </a>
-              <a href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
+              <span className="text-gray-300 hover:text-emerald-400 transition-colors cursor-pointer">
                 My Stories
-              </a>
+              </span>
               <a href="/story-generator">
                 <Button variant="outline">
                   Create Story
@@ -72,7 +72,7 @@ export default function HomePage() {
             </div>
             
             <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Illude is an AI-powered interactive story generator that crafts evolving narratives in real-time. You're
+              Illude is an AI-powered interactive story generator that crafts evolving narratives in real-time. You&apos;re
               the creative director, and AI is your loyal scribe.
             </p>
             <div className="flex justify-center">
@@ -177,7 +177,7 @@ export default function HomePage() {
                 </CyberCard>
               </a>
               
-              <a href="/stories" className="block">
+              <span className="block cursor-pointer">
                 <CyberCard 
                   variant="story"
                   title="STORIES"
@@ -193,7 +193,7 @@ export default function HomePage() {
                     </CardContent>
                   </Card>
                 </CyberCard>
-              </a>
+              </span>
             </div>
           </div>
         </div>
@@ -222,7 +222,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Guide the Narrative</h3>
               <p className="text-gray-400">
-                Direct the story's progression with your creative input while AI generates compelling plot developments.
+                Direct the story&apos;s progression with your creative input while AI generates compelling plot developments.
               </p>
             </div>
             <div className="text-center">
@@ -258,8 +258,8 @@ export default function HomePage() {
                     ))}
                   </div>
                   <p className="text-gray-300 mb-6 italic">
-                    "Illude has revolutionized my creative process. The AI understands my vision and helps bring stories
-                    to life in ways I never imagined."
+                    &ldquo;Illude has revolutionized my creative process. The AI understands my vision and helps bring stories
+                    to life in ways I never imagined.&rdquo;
                   </p>
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-black font-semibold mr-3">
@@ -287,8 +287,8 @@ export default function HomePage() {
                     ))}
                   </div>
                   <p className="text-gray-300 mb-6 italic">
-                    "The interactive storytelling experience is incredible. It's like having a co-writer who never runs
-                    out of creative ideas."
+                    &ldquo;The interactive storytelling experience is incredible. It&apos;s like having a co-writer who never runs
+                    out of creative ideas.&rdquo;
                   </p>
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-black font-semibold mr-3">

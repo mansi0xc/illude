@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, BookOpen, ArrowLeft, Wand2, Edit, Eye, Users, Settings, Bot, User } from "lucide-react"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 
 interface Chapter {
   chapterNumber: number
@@ -24,9 +24,14 @@ interface StoryData {
   _id: string
   title: string
   description: string
-  characters: any[]
+  characters: { name: string; personality?: string; goals?: string }[]
   chapters: Chapter[]
-  memory: any
+  memory: {
+    plotPoints: string[];
+    conflicts: string[];
+    characterArcs: { characterName: string; currentState: string; developments: string[] }[];
+    [key: string]: unknown;
+  }
   status: 'draft' | 'active' | 'completed' | 'paused'
   lastUpdated: string
 }
@@ -41,7 +46,6 @@ export default function ContinueStoryPage() {
   const [showMemory, setShowMemory] = useState(false)
   
   const params = useParams()
-  const router = useRouter()
 
   useEffect(() => {
     if (params.id) {
@@ -132,7 +136,7 @@ export default function ContinueStoryPage() {
             </div>
             <h3 className="text-2xl font-bold mb-4">Story Not Found</h3>
             <p className="text-gray-400 mb-8">
-              This story doesn't exist or has been removed.
+              This story doesn&apos;t exist or has been removed.
             </p>
             <Link href="/stories">
               <Button size="lg">
@@ -265,7 +269,7 @@ export default function ContinueStoryPage() {
                     <div>
                       <h4 className="font-semibold text-emerald-400 mb-2">Character Arcs</h4>
                       <div className="space-y-2">
-                        {story.memory.characterArcs.map((arc: any, index: number) => (
+                        {story.memory.characterArcs.map((arc: { characterName: string; currentState: string; developments: string[] }, index: number) => (
                           <div key={index} className="p-2 bg-gray-800/50 rounded border border-gray-700">
                             <div className="font-medium text-white text-sm">{arc.characterName}</div>
                             <div className="text-xs text-gray-400">Current: {arc.currentState}</div>
@@ -334,7 +338,7 @@ export default function ContinueStoryPage() {
                       className="flex flex-col gap-1 h-auto py-3"
                     >
                       <User className="w-5 h-5" />
-                      <span className="text-sm">I'll Guide</span>
+                      <span className="text-sm">I&apos;ll Guide</span>
                     </Button>
                   </div>
                 </div>
