@@ -1,6 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=My+Soul&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+
+/* Local Font Declaration */
+@font-face {
+  font-family: 'My Soul';
+  src: url('/MySoul-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
