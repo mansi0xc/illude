@@ -138,7 +138,7 @@ export default function StoriesPage() {
                 My Stories
               </Badge>
               <Link href="/story-generator">
-                <Button className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold">
+                <Button>
                   <Plus className="w-4 h-4 mr-2" />
                   New Story
                 </Button>
@@ -162,20 +162,22 @@ export default function StoriesPage() {
 
         {/* Stories Grid */}
         {stories.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 mx-auto">
-              <BookOpen className="w-12 h-12 text-emerald-400" />
+          <div className="text-center py-20">
+            <div className="max-w-md mx-auto">
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="w-10 h-10 text-black" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">No Stories Yet</h3>
+              <p className="text-gray-400 mb-8">
+                Start your creative journey by generating your first story with our AI-powered storyteller.
+              </p>
+              <Link href="/story-generator">
+                <Button size="lg">
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Create Your First Story
+                </Button>
+              </Link>
             </div>
-            <h3 className="text-2xl font-semibold text-gray-300 mb-4">No Stories Yet</h3>
-            <p className="text-gray-400 mb-8 max-w-md mx-auto">
-              Your story collection is empty. Create your first epic adventure and watch your imagination come to life!
-            </p>
-            <Link href="/story-generator">
-              <Button className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-8 py-3">
-                <Plus className="w-5 h-5 mr-2" />
-                Create Your First Story
-              </Button>
-            </Link>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -187,9 +189,9 @@ export default function StoriesPage() {
                       {story.status.charAt(0).toUpperCase() + story.status.slice(1)}
                     </Badge>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      className="border-red-500/50 text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => deleteStory(story._id)}
                       disabled={deleting === story._id}
                     >
@@ -220,16 +222,17 @@ export default function StoriesPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2">
                     <Link href={`/stories/${story._id}`} className="flex-1">
-                      <Button className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30">
+                      <Button className="w-full">
                         <Eye className="w-4 h-4 mr-2" />
                         Read Story
                       </Button>
                     </Link>
-                    <Link href={`/stories/${story._id}/continue`}>
-                      <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                        <Plus className="w-4 h-4" />
+                    <Link href={`/stories/${story._id}/continue`} className="flex-1">
+                      <Button variant="outline" className="w-full">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Continue
                       </Button>
                     </Link>
                   </div>
@@ -245,7 +248,7 @@ export default function StoriesPage() {
         <div className="flex flex-col gap-3">
           <Link href="/story-generator">
             <Button 
-              className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-black shadow-lg shadow-emerald-500/25 flex items-center justify-center"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
               title="Create New Story"
             >
               <Plus className="w-6 h-6" />
@@ -254,7 +257,7 @@ export default function StoriesPage() {
           <Link href="/">
             <Button 
               variant="outline"
-              className="w-14 h-14 rounded-full border-gray-700 bg-gray-900/90 hover:bg-gray-800 text-gray-300 shadow-lg flex items-center justify-center backdrop-blur-sm"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
               title="Home"
             >
               <ArrowLeft className="w-5 h-5" />

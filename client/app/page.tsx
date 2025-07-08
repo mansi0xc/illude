@@ -29,10 +29,7 @@ export default function HomePage() {
                 My Stories
               </a>
               <a href="/story-generator">
-                <Button
-                  variant="outline"
-                  className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 bg-transparent"
-                >
+                <Button variant="outline">
                   Create Story
                 </Button>
               </a>
@@ -41,10 +38,7 @@ export default function HomePage() {
             {/* Mobile menu button */}
             <div className="md:hidden">
               <a href="/story-generator">
-                <Button
-                  size="sm"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold"
-                >
+                <Button size="sm">
                   Create
                 </Button>
               </a>
@@ -81,24 +75,13 @@ export default function HomePage() {
               Illude is an AI-powered interactive story generator that crafts evolving narratives in real-time. You're
               the creative director, and AI is your loyal scribe.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex justify-center">
               <a href="/story-generator">
-                <Button
-                  size="lg"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-8 py-3 rounded-xl shadow-lg shadow-emerald-500/25"
-                >
+                <Button size="lg">
                   <Play className="w-5 h-5 mr-2" />
                   Start Creating
                 </Button>
               </a>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-gray-700 text-gray-300 hover:bg-gray-800 px-8 py-3 rounded-xl bg-transparent"
-              >
-                Watch Demo
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
             </div>
           </div>
         </div>
@@ -323,18 +306,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24">
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-emerald-500/5 via-cyan-500/5 to-purple-500/5">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold mb-6">Ready to Create Your Story?</h2>
           <p className="text-xl text-gray-300 mb-8">
             Join thousands of creators who are already bringing their imagination to life with Illude.
           </p>
           <a href="/story-generator">
-            <Button
-              size="lg"
-              className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-12 py-4 rounded-xl shadow-lg shadow-emerald-500/25"
-            >
+            <Button size="lg">
               <Sparkles className="w-5 h-5 mr-2" />
               Start Your Journey
             </Button>

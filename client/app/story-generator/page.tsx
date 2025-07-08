@@ -237,9 +237,8 @@ export default function StoryGenerator() {
                       <h4 className="font-semibold text-emerald-400">Character {index + 1}</h4>
                       {story.characters.length > 1 && (
                         <Button
-                          variant="outline"
+                          variant="destructive"
                           size="sm"
-                          className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                           onClick={() => removeCharacter(index)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -322,7 +321,7 @@ export default function StoryGenerator() {
                 ))}
                 <Button
                   variant="outline"
-                  className="w-full border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
+                  className="w-full"
                   onClick={addCharacter}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -378,9 +377,8 @@ export default function StoryGenerator() {
                           />
                           {story[key].length > 1 && (
                             <Button
-                              variant="outline"
+                              variant="destructive"
                               size="sm"
-                              className="border-red-500/50 text-red-400 hover:bg-red-500/10 px-3"
                               onClick={() => removeArrayItem(key, index)}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -391,7 +389,6 @@ export default function StoryGenerator() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
                         onClick={() => addArrayItem(key)}
                       >
                         <Plus className="w-3 h-3 mr-1" />
@@ -407,7 +404,7 @@ export default function StoryGenerator() {
             <Button
               onClick={generateChapter}
               disabled={isGenerating || !story.title || !story.characters[0].name}
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-4 rounded-xl shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (
                 <>
@@ -446,13 +443,13 @@ export default function StoryGenerator() {
                     {storyId && (
                       <div className="flex gap-3">
                         <Link href={`/stories/${storyId}`} className="flex-1">
-                          <Button className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30">
+                          <Button variant="outline" className="w-full">
                             <Eye className="w-4 h-4 mr-2" />
                             Read Full Story
                           </Button>
                         </Link>
                         <Link href={`/stories/${storyId}/continue`} className="flex-1">
-                          <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold">
+                          <Button className="w-full">
                             <Plus className="w-4 h-4 mr-2" />
                             Continue Story
                           </Button>
@@ -462,14 +459,14 @@ export default function StoryGenerator() {
                     
                     <div className="text-center space-y-4">
                       <Link href="/stories">
-                        <Button variant="outline" className="w-full border-gray-700 text-gray-300 hover:bg-gray-800">
+                        <Button variant="outline" className="w-full">
                           <BookOpen className="w-4 h-4 mr-2" />
                           View All Stories
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                       </Link>
                       <Link href="/">
-                        <Button variant="outline" className="w-full border-emerald-700 text-emerald-300 hover:bg-emerald-800/20">
+                        <Button variant="outline" className="w-full">
                           <ArrowLeft className="w-4 h-4 mr-2" />
                           Back to Home
                         </Button>
@@ -488,13 +485,13 @@ export default function StoryGenerator() {
                     
                     <div className="flex gap-3">
                       <Link href="/stories">
-                        <Button variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+                        <Button variant="outline" size="sm">
                           <BookOpen className="w-4 h-4 mr-2" />
                           View Stories
                         </Button>
                       </Link>
                       <Link href="/">
-                        <Button variant="outline" size="sm" className="border-emerald-700 text-emerald-300 hover:bg-emerald-800/20">
+                        <Button variant="outline" size="sm">
                           <ArrowLeft className="w-4 h-4 mr-2" />
                           Home
                         </Button>
@@ -513,7 +510,7 @@ export default function StoryGenerator() {
         <div className="flex flex-col gap-3">
           <Link href="/stories">
             <Button 
-              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25 flex items-center justify-center"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
               title="View All Stories"
             >
               <BookOpen className="w-6 h-6" />
@@ -522,7 +519,7 @@ export default function StoryGenerator() {
           <Link href="/">
             <Button 
               variant="outline"
-              className="w-14 h-14 rounded-full border-gray-700 bg-gray-900/90 hover:bg-gray-800 text-gray-300 shadow-lg flex items-center justify-center backdrop-blur-sm"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
               title="Home"
             >
               <ArrowLeft className="w-5 h-5" />

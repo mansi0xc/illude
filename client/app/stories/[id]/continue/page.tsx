@@ -125,15 +125,18 @@ export default function ContinueStoryPage() {
   if (!story) {
     return (
       <div className="min-h-screen bg-black text-white">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <BookOpen className="w-8 h-8 text-red-400" />
+        <div className="text-center py-20">
+          <div className="max-w-md mx-auto">
+            <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-10 h-10 text-black" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-300 mb-2">Story Not Found</h3>
-            <p className="text-gray-400 mb-6">The story you're looking for doesn't exist.</p>
+            <h3 className="text-2xl font-bold mb-4">Story Not Found</h3>
+            <p className="text-gray-400 mb-8">
+              This story doesn't exist or has been removed.
+            </p>
             <Link href="/stories">
-              <Button className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold">
+              <Button size="lg">
+                <ArrowLeft className="w-5 h-5 mr-2" />
                 Back to Stories
               </Button>
             </Link>
@@ -205,14 +208,13 @@ export default function ContinueStoryPage() {
 
                 <div className="flex gap-2">
                   <Link href={`/stories/${story._id}`} className="flex-1">
-                    <Button variant="outline" className="w-full border-gray-700 text-gray-300 hover:bg-gray-800">
+                    <Button variant="outline" className="w-full">
                       <Eye className="w-4 h-4 mr-2" />
                       Read Story
                     </Button>
                   </Link>
                   <Button
                     variant="outline"
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
                     onClick={() => setShowMemory(!showMemory)}
                   >
                     <Settings className="w-4 h-4" />
@@ -317,40 +319,23 @@ export default function ContinueStoryPage() {
                 {/* Generation Type Selection */}
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-300">Generation Mode</label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant={generateType === 'ai' ? 'default' : 'outline'}
                       onClick={() => setGenerateType('ai')}
-                      className={`p-4 rounded-lg border transition-all ${
-                        generateType === 'ai' 
-                          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' 
-                          : 'border-gray-700 bg-gray-800/50 text-gray-300 hover:border-gray-600'
-                      }`}
+                      className="flex flex-col gap-1 h-auto py-3"
                     >
-                      <div className="flex items-center gap-2 mb-2">
-                        <Bot className="w-5 h-5" />
-                        <span className="font-medium">AI Direction</span>
-                      </div>
-                      <p className="text-xs text-gray-400">
-                        Let AI decide the story direction based on established plot and memory
-                      </p>
-                    </button>
-                    
-                    <button
+                      <Bot className="w-5 h-5" />
+                      <span className="text-sm">AI Continues</span>
+                    </Button>
+                    <Button
+                      variant={generateType === 'user-directed' ? 'default' : 'outline'}
                       onClick={() => setGenerateType('user-directed')}
-                      className={`p-4 rounded-lg border transition-all ${
-                        generateType === 'user-directed' 
-                          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' 
-                          : 'border-gray-700 bg-gray-800/50 text-gray-300 hover:border-gray-600'
-                      }`}
+                      className="flex flex-col gap-1 h-auto py-3"
                     >
-                      <div className="flex items-center gap-2 mb-2">
-                        <User className="w-5 h-5" />
-                        <span className="font-medium">Your Direction</span>
-                      </div>
-                      <p className="text-xs text-gray-400">
-                        Provide specific direction for how the story should continue
-                      </p>
-                    </button>
+                      <User className="w-5 h-5" />
+                      <span className="text-sm">I'll Guide</span>
+                    </Button>
                   </div>
                 </div>
 
@@ -373,7 +358,7 @@ export default function ContinueStoryPage() {
                 <Button
                   onClick={generateChapter}
                   disabled={generating || (generateType === 'user-directed' && !userDirection.trim())}
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3 rounded-xl shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {generating ? (
                     <>
@@ -431,16 +416,17 @@ export default function ContinueStoryPage() {
                       </div>
                     )}
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2">
                       <Button
-                        onClick={() => setNewChapter(null)}
                         variant="outline"
-                        className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800"
+                        className="flex-1"
+                        onClick={() => setNewChapter(null)}
                       >
-                        Generate Another
+                        <Edit className="w-4 h-4 mr-2" />
+                        Try Again
                       </Button>
                       <Link href={`/stories/${story._id}`} className="flex-1">
-                        <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold">
+                        <Button className="w-full">
                           <Eye className="w-4 h-4 mr-2" />
                           Read Full Story
                         </Button>
@@ -469,7 +455,7 @@ export default function ContinueStoryPage() {
         <div className="flex flex-col gap-3">
           <Link href={`/stories/${story._id}`}>
             <Button 
-              className="w-14 h-14 rounded-full bg-purple-500 hover:bg-purple-600 text-white shadow-lg shadow-purple-500/25 flex items-center justify-center"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
               title="Read Full Story"
             >
               <Eye className="w-6 h-6" />
@@ -477,7 +463,7 @@ export default function ContinueStoryPage() {
           </Link>
           <Link href="/stories">
             <Button 
-              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25 flex items-center justify-center"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
               title="All Stories"
             >
               <BookOpen className="w-6 h-6" />
@@ -486,7 +472,7 @@ export default function ContinueStoryPage() {
           <Link href="/">
             <Button 
               variant="outline"
-              className="w-14 h-14 rounded-full border-gray-700 bg-gray-900/90 hover:bg-gray-800 text-gray-300 shadow-lg flex items-center justify-center backdrop-blur-sm"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
               title="Home"
             >
               <ArrowLeft className="w-5 h-5" />

@@ -129,3 +129,50 @@
     -webkit-line-clamp: 3;
   }
 }
+
+/* Custom Button Styles */
+@layer components {
+  .custom-button-style {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .custom-button-style::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(16,185,129,0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .custom-button-style:hover::before {
+    transform: translateX(100%);
+  }
+  
+  /* Ensure consistent styling for all button elements */
+  button:not([data-slot="button"]) {
+    background-color: rgba(31, 41, 55, 0.5) !important; /* gray-800/50 */
+    color: #34d399 !important; /* emerald-400 */
+    border: none !important;
+    cursor: pointer !important;
+    border-radius: 8px !important;
+    min-width: 100px !important;
+    height: 45px !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 500 !important;
+    padding: 0 24px !important;
+  }
+  
+  button:not([data-slot="button"]):hover {
+    background-color: #10b981 !important; /* emerald-500 */
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.37) !important;
+    color: #000000 !important; /* black text on emerald bg */
+  }
+}

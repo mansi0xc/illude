@@ -119,17 +119,22 @@ export default function StoryReaderPage() {
     return (
       <div className="min-h-screen bg-black text-white">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <BookOpen className="w-8 h-8 text-red-400" />
+          <div className="text-center py-20">
+            <div className="max-w-md mx-auto">
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="w-10 h-10 text-black" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Story Not Found</h3>
+              <p className="text-gray-400 mb-8">
+                This story doesn't exist or has been removed.
+              </p>
+              <Link href="/stories">
+                <Button size="lg">
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Back to Stories
+                </Button>
+              </Link>
             </div>
-            <h3 className="text-xl font-semibold text-gray-300 mb-2">Story Not Found</h3>
-            <p className="text-gray-400 mb-6">The story you're looking for doesn't exist or has been deleted.</p>
-            <Link href="/stories">
-              <Button className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold">
-                Back to Stories
-              </Button>
-            </Link>
           </div>
         </div>
       </div>
@@ -156,7 +161,7 @@ export default function StoryReaderPage() {
                 {story.status.charAt(0).toUpperCase() + story.status.slice(1)}
               </Badge>
               <Link href={`/stories/${story._id}/continue`}>
-                <Button className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold">
+                <Button>
                   <Plus className="w-4 h-4 mr-2" />
                   Continue Story
                 </Button>
@@ -331,12 +336,20 @@ export default function StoryReaderPage() {
             <p className="text-gray-300 mb-6">
               Ready to see what happens next? Let the AI continue your story or guide it with your own direction.
             </p>
-            <Link href={`/stories/${story._id}/continue`}>
-              <Button className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-8 py-3">
-                <Plus className="w-5 h-5 mr-2" />
-                Write Next Chapter
-              </Button>
-            </Link>
+            <div className="text-center space-y-4">
+              <Link href={`/stories/${story._id}/continue`}>
+                <Button className="w-full">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Continue Story
+                </Button>
+              </Link>
+              <Link href="/stories">
+                <Button variant="outline" className="w-full">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  All Stories
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -346,7 +359,7 @@ export default function StoryReaderPage() {
         <div className="flex flex-col gap-3">
           <Link href={`/stories/${story._id}/continue`}>
             <Button 
-              className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-black shadow-lg shadow-emerald-500/25 flex items-center justify-center"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
               title="Continue Story"
             >
               <Plus className="w-6 h-6" />
@@ -354,7 +367,7 @@ export default function StoryReaderPage() {
           </Link>
           <Link href="/stories">
             <Button 
-              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25 flex items-center justify-center"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
               title="All Stories"
             >
               <BookOpen className="w-6 h-6" />
@@ -363,7 +376,7 @@ export default function StoryReaderPage() {
           <Link href="/">
             <Button 
               variant="outline"
-              className="w-14 h-14 rounded-full border-gray-700 bg-gray-900/90 hover:bg-gray-800 text-gray-300 shadow-lg flex items-center justify-center backdrop-blur-sm"
+              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
               title="Home"
             >
               <ArrowLeft className="w-5 h-5" />
