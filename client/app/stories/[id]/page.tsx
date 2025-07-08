@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, BookOpen, ArrowLeft, Plus, Users, Settings, Clock, Edit, ChevronRight } from "lucide-react"
+import { Sparkles, BookOpen, ArrowLeft, Plus, Users, Settings, Clock, Edit, ChevronRight, ChevronLeft, List, X } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 
@@ -59,6 +59,8 @@ export default function StoryReaderPage() {
   const [story, setStory] = useState<StoryData | null>(null)
   const [loading, setLoading] = useState(true)
   const [showDetails, setShowDetails] = useState(false)
+  const [currentChapterIndex, setCurrentChapterIndex] = useState(0)
+  const [showTableOfContents, setShowTableOfContents] = useState(false)
   const params = useParams()
 
   useEffect(() => {
@@ -99,6 +101,27 @@ export default function StoryReaderPage() {
       day: 'numeric'
     })
   }
+
+  const goToChapter = (index: number) => {
+    setCurrentChapterIndex(index)
+    setShowTableOfContents(false)
+  }
+
+  const goToPreviousChapter = () => {
+    if (currentChapterIndex > 0) {
+      setCurrentChapterIndex(currentChapterIndex - 1)
+    }
+  }
+
+  const goToNextChapter = () => {
+    if (story && currentChapterIndex < story.chapters.length - 1) {
+      setCurrentChapterIndex(currentChapterIndex + 1)
+    }
+  }
+
+  const isFirstChapter = currentChapterIndex === 0
+  const isLastChapter = story ? currentChapterIndex === story.chapters.length - 1 : false
+  const currentChapter = story?.chapters[currentChapterIndex]
 
   if (loading) {
     return (
@@ -160,18 +183,81 @@ export default function StoryReaderPage() {
               <Badge className={getStatusColor(story.status)}>
                 {story.status.charAt(0).toUpperCase() + story.status.slice(1)}
               </Badge>
-              <Link href={`/stories/${story._id}/continue`}>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Continue Story
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowTableOfContents(true)}
+              >
+                <List className="w-4 h-4 mr-2" />
+                Chapters
+              </Button>
+              {isLastChapter && (
+                <Link href={`/stories/${story._id}/continue`}>
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Continue Story
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Table of Contents Modal */}
+      {showTableOfContents && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="bg-gray-900/95 border-gray-800 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <List className="w-5 h-5 text-emerald-400" />
+                  Table of Contents
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowTableOfContents(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {story.chapters.map((chapter, index) => (
+                  <div
+                    key={index}
+                    className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                      index === currentChapterIndex
+                        ? 'border-emerald-500/50 bg-emerald-500/10'
+                        : 'border-gray-700 hover:border-gray-600 hover:bg-gray-800/50'
+                    }`}
+                    onClick={() => goToChapter(index)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-white">
+                          Chapter {chapter.chapterNumber}
+                          {chapter.title && `: ${chapter.title}`}
+                        </h4>
+                        {chapter.createdAt && (
+                          <p className="text-sm text-gray-500">
+                            {formatDate(chapter.createdAt)}
+                          </p>
+                        )}
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Story Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -181,7 +267,6 @@ export default function StoryReaderPage() {
             <Button
               variant="outline"
               size="sm"
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
               onClick={() => setShowDetails(!showDetails)}
             >
               <Settings className="w-4 h-4 mr-2" />
@@ -264,122 +349,138 @@ export default function StoryReaderPage() {
           )}
         </div>
 
-        {/* Chapters */}
-        <div className="space-y-8">
-          {story.chapters.map((chapter, index) => (
-            <Card key={index} className="bg-gray-900/50 border-gray-800">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-bold text-emerald-400">{chapter.chapterNumber}</span>
-                    </div>
-                    Chapter {chapter.chapterNumber}
-                    {chapter.title && `: ${chapter.title}`}
-                  </CardTitle>
-                  {chapter.createdAt && (
+        {/* Current Chapter */}
+        {currentChapter && (
+          <Card className="bg-gray-900/50 border-gray-800 mb-8">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-bold text-emerald-400">{currentChapter.chapterNumber}</span>
+                  </div>
+                  Chapter {currentChapter.chapterNumber}
+                  {currentChapter.title && `: ${currentChapter.title}`}
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">
+                    {currentChapterIndex + 1} of {story.chapters.length}
+                  </span>
+                  {currentChapter.createdAt && (
                     <span className="text-sm text-gray-500">
-                      {formatDate(chapter.createdAt)}
+                      • {formatDate(currentChapter.createdAt)}
                     </span>
                   )}
                 </div>
-                
-                {chapter.userDirection && (
-                  <div className="mt-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Edit className="w-4 h-4 text-blue-400" />
-                      <span className="text-sm font-medium text-blue-400">User Direction</span>
-                    </div>
-                    <p className="text-sm text-gray-300">{chapter.userDirection}</p>
+              </div>
+              
+              {currentChapter.userDirection && (
+                <div className="mt-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Edit className="w-4 h-4 text-blue-400" />
+                    <span className="text-sm font-medium text-blue-400">User Direction</span>
                   </div>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="prose prose-invert prose-emerald max-w-none">
-                  <div className="text-gray-200 leading-relaxed story-content">
-                    {chapter.content.split('\n').map((line, lineIndex) => {
-                      // Check if line starts with ##
-                      if (line.trim().startsWith('## ')) {
-                        return (
-                          <div key={lineIndex} className="chapter-heading">
-                            {line.trim().replace(/^## /, '')}
-                          </div>
-                        )
-                      }
-                      // Regular line
+                  <p className="text-sm text-gray-300">{currentChapter.userDirection}</p>
+                </div>
+              )}
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-invert prose-emerald max-w-none">
+                <div className="text-gray-200 leading-relaxed story-content">
+                  {currentChapter.content.split('\n').map((line, lineIndex) => {
+                    // Check if line starts with ##
+                    if (line.trim().startsWith('## ')) {
                       return (
-                        <div key={lineIndex}>
-                          {line || '\u00A0'} {/* Non-breaking space for empty lines */}
+                        <div key={lineIndex} className="chapter-heading">
+                          {line.trim().replace(/^## /, '')}
                         </div>
                       )
-                    })}
-                  </div>
+                    }
+                    // Regular line
+                    return (
+                      <div key={lineIndex}>
+                        {line || '\u00A0'} {/* Non-breaking space for empty lines */}
+                      </div>
+                    )
+                  })}
                 </div>
+              </div>
 
-                {chapter.aiSummary && (
-                  <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                      <span className="text-sm font-medium text-emerald-400">Chapter Summary</span>
-                    </div>
-                    <p className="text-sm text-gray-300">{chapter.aiSummary}</p>
+              {currentChapter.aiSummary && (
+                <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <span className="text-sm font-medium text-emerald-400">Chapter Summary</span>
                   </div>
-                )}
+                  <p className="text-sm text-gray-300">{currentChapter.aiSummary}</p>
+                </div>
+              )}
 
-                {chapter.keyEvents && chapter.keyEvents.length > 0 && (
-                  <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
-                    <h5 className="text-sm font-medium text-gray-400 mb-2">Key Events</h5>
-                    <ul className="text-sm text-gray-300 space-y-1">
-                      {chapter.keyEvents.map((event, eventIndex) => (
-                        <li key={eventIndex} className="flex items-start gap-2">
-                          <ChevronRight className="w-3 h-3 text-emerald-400 mt-0.5 flex-shrink-0" />
-                          {event}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              {currentChapter.keyEvents && currentChapter.keyEvents.length > 0 && (
+                <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
+                  <h5 className="text-sm font-medium text-gray-400 mb-2">Key Events</h5>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    {currentChapter.keyEvents.map((event, eventIndex) => (
+                      <li key={eventIndex} className="flex items-start gap-2">
+                        <ChevronRight className="w-3 h-3 text-emerald-400 mt-0.5 flex-shrink-0" />
+                        {event}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-        {/* Continue Story CTA */}
-        <div className="mt-12 text-center">
-          <div className="p-8 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent rounded-xl border border-emerald-500/20">
-            <h3 className="text-2xl font-bold text-white mb-4">Continue Your Adventure</h3>
-            <p className="text-gray-300 mb-6">
-              Ready to see what happens next? Let the AI continue your story or guide it with your own direction.
-            </p>
-            <div className="text-center space-y-4">
-              <Link href={`/stories/${story._id}/continue`}>
-                <Button className="w-full">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Continue Story
+              {/* Chapter Navigation */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={goToPreviousChapter}
+                  disabled={isFirstChapter}
+                  className="flex-1 mr-4"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  Previous Chapter
                 </Button>
-              </Link>
-              <Link href="/stories">
-                <Button variant="outline" className="w-full">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  All Stories
+                
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTableOfContents(true)}
+                  className="mx-2"
+                >
+                  <List className="w-4 h-4" />
                 </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
+
+                {!isLastChapter ? (
+                  <Button
+                    onClick={goToNextChapter}
+                    className="flex-1 ml-4"
+                  >
+                    Next Chapter
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                ) : (
+                  <Link href={`/stories/${story._id}/continue`} className="flex-1 ml-4">
+                    <Button className="w-full">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Continue Story
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
       
       {/* Floating Navigation */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-40">
         <div className="flex flex-col gap-3">
-          <Link href={`/stories/${story._id}/continue`}>
-            <Button 
-              className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
-              title="Continue Story"
-            >
-              <Plus className="w-6 h-6" />
-            </Button>
-          </Link>
+          <Button 
+            className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
+            title="Table of Contents"
+            onClick={() => setShowTableOfContents(true)}
+          >
+            <List className="w-6 h-6" />
+          </Button>
           <Link href="/stories">
             <Button 
               className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
