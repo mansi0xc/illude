@@ -1,15 +1,15 @@
 export default function RotatingCards() {
   const cards = [
-    { index: 0, color: "52, 211, 153" }, // emerald-400
-    { index: 1, color: "16, 185, 129" }, // emerald-500  
-    { index: 2, color: "5, 150, 105" },  // emerald-600
-    { index: 3, color: "4, 120, 87" },   // emerald-700
-    { index: 4, color: "6, 95, 70" },    // emerald-800
-    { index: 5, color: "6, 78, 59" },    // emerald-900
-    { index: 6, color: "34, 197, 94" },  // green-500
-    { index: 7, color: "21, 128, 61" },  // green-700
-    { index: 8, color: "22, 163, 74" },  // green-600
-    { index: 9, color: "74, 222, 128" }, // green-400
+    { index: 0, color: "142, 249, 252" }, // Bright cyan
+    { index: 1, color: "142, 252, 204" }, // Mint green
+    { index: 2, color: "142, 252, 157" }, // Light green
+    { index: 3, color: "215, 252, 142" }, // Lime yellow
+    { index: 4, color: "252, 252, 142" }, // Bright yellow
+    { index: 5, color: "252, 208, 142" }, // Orange yellow
+    { index: 6, color: "252, 142, 142" }, // Coral red
+    { index: 7, color: "252, 142, 239" }, // Hot pink
+    { index: 8, color: "204, 142, 252" }, // Light purple
+    { index: 9, color: "142, 202, 252" }, // Sky blue
   ]
 
   return (
@@ -25,8 +25,13 @@ export default function RotatingCards() {
         }
 
         @keyframes card-sparkle {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 1; transform: scale(1); }
+          0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+          50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+        }
+
+        @keyframes card-glow {
+          0%, 100% { box-shadow: 0 0 10px rgba(var(--card-color), 0.3); }
+          50% { box-shadow: 0 0 20px rgba(var(--card-color), 0.6), 0 0 30px rgba(var(--card-color), 0.4); }
         }
 
         .rotating-cards-wrapper {
@@ -55,50 +60,67 @@ export default function RotatingCards() {
           animation-play-state: paused;
         }
 
-        .rotating-card {
-          position: absolute;
-          border-radius: 12px;
-          overflow: hidden;
-          inset: 0;
-          backdrop-filter: blur(4px);
-        }
+                  .rotating-card {
+            position: absolute;
+            border-radius: 12px;
+            overflow: hidden;
+            inset: 0;
+            backdrop-filter: blur(8px);
+            animation: card-glow 3s ease-in-out infinite;
+          }
 
-        .rotating-card-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+          .rotating-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: relative;
+          }
 
-        .rotating-card::after {
-          content: '';
-          position: absolute;
-          top: 10%;
-          left: 10%;
-          width: 4px;
-          height: 4px;
-          background: rgba(255, 255, 255, 0.8);
-          border-radius: 50%;
-          animation: card-sparkle 2s ease-in-out infinite;
-        }
+          .rotating-card::before {
+            content: '';
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: card-sparkle 2s ease-in-out infinite;
+            z-index: 10;
+          }
+
+          .rotating-card::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            right: 15%;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: card-sparkle 2.5s ease-in-out infinite reverse;
+            z-index: 10;
+          }
       `}</style>
       
       <div className="rotating-cards-wrapper">
         <div className="rotating-cards-inner">
           {cards.map((card) => (
-            <div
-              key={card.index}
-              className="rotating-card"
-              style={{
-                border: `2px solid rgba(${card.color}, 0.6)`,
-                transform: `rotateY(${(360 / 10) * card.index}deg) translateZ(250px)`,
-              }}
-            >
-              <div 
-                className="rotating-card-img"
+                          <div
+                key={card.index}
+                className="rotating-card"
                 style={{
-                  background: `transparent radial-gradient(circle, rgba(${card.color}, 0.2) 0%, rgba(${card.color}, 0.4) 50%, rgba(${card.color}, 0.6) 80%, rgba(${card.color}, 0.8) 100%)`
-                }}
-              ></div>
+                  border: `2px solid rgba(${card.color}, 0.8)`,
+                  transform: `rotateY(${(360 / 10) * card.index}deg) translateZ(250px)`,
+                  '--card-color': card.color,
+                } as React.CSSProperties}
+              >
+                               <div 
+                   className="rotating-card-img"
+                   style={{
+                     background: `transparent radial-gradient(circle, rgba(${card.color}, 0.1) 0%, rgba(${card.color}, 0.3) 30%, rgba(${card.color}, 0.5) 60%, rgba(${card.color}, 0.7) 80%, rgba(${card.color}, 0.9) 100%)`
+                   }}
+                 ></div>
             </div>
           ))}
         </div>

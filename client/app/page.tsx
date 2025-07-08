@@ -54,22 +54,26 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-cyan-500/5 to-purple-500/5" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-500/3 to-pink-500/3" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-6 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20">
+            <Badge className="mb-6 bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-purple-500/10 text-emerald-400 border-emerald-500/20 hover:bg-gradient-to-r hover:from-emerald-500/20 hover:via-cyan-500/20 hover:to-purple-500/20">
               <Zap className="w-3 h-3 mr-1" />
               AI-Powered Storytelling
             </Badge>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-cyan-200 via-emerald-200 to-purple-200 bg-clip-text text-transparent">
               Bring Your
-              <span className="block text-emerald-400">Imagination</span>
+              <span className="block bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">Imagination</span>
               to Life
             </h1>
             
             {/* 3D Rotating Cards */}
-            <div className="my-12">
-              <RotatingCards />
+            <div className="my-12 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-yellow-500/10 to-pink-500/10 rounded-full blur-3xl transform scale-150"></div>
+              <div className="relative z-10">
+                <RotatingCards />
+              </div>
             </div>
             
             <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
@@ -149,7 +153,7 @@ export default function HomePage() {
           
           {/* Quick Navigation */}
           <div className="mt-16 text-center">
-            <h3 className="text-2xl font-bold mb-8 text-emerald-400">Quick Start</h3>
+            <h3 className="text-2xl font-bold mb-8 bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">Quick Start</h3>
             <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <a href="/story-generator" className="block">
                 <Card className="bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
