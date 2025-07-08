@@ -124,8 +124,8 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
                     <Sparkles className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Real-time Generation</h3>
-                  <p className="text-gray-400 leading-relaxed">
+                  <h3 className="text-xl font-semibold mb-3 text-white">Real-time Generation</h3>
+                  <p className="text-gray-300 leading-relaxed">
                     Watch your story unfold instantly as the AI crafts compelling narratives based on your prompts and
                     directions.
                   </p>
@@ -143,8 +143,8 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
                     <Users className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Character Development</h3>
-                  <p className="text-gray-400 leading-relaxed">
+                  <h3 className="text-xl font-semibold mb-3 text-white">Character Development</h3>
+                  <p className="text-gray-300 leading-relaxed">
                     Create rich, complex characters that evolve throughout your story with consistent personalities and
                     motivations.
                   </p>
@@ -162,8 +162,8 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
                     <BookOpen className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Interactive Control</h3>
-                  <p className="text-gray-400 leading-relaxed">
+                  <h3 className="text-xl font-semibold mb-3 text-white">Interactive Control</h3>
+                  <p className="text-gray-300 leading-relaxed">
                     Guide the narrative direction with your creative input while the AI handles the intricate storytelling
                     details.
                   </p>
@@ -187,8 +187,8 @@ export default function HomePage() {
                       <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-emerald-500/30 transition-colors">
                         <Play className="w-6 h-6 text-emerald-400" />
                       </div>
-                      <h4 className="text-lg font-semibold mb-2 group-hover:text-emerald-400 transition-colors">Create New Story</h4>
-                      <p className="text-gray-400 text-sm">Start crafting your epic narrative</p>
+                      <h4 className="text-lg font-semibold mb-2 text-emerald-100 group-hover:text-emerald-300 transition-colors">Create New Story</h4>
+                      <p className="text-emerald-300/80 text-sm">Start crafting your epic narrative</p>
                     </CardContent>
                   </Card>
                 </CyberCard>
@@ -205,8 +205,8 @@ export default function HomePage() {
                       <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-blue-500/30 transition-colors">
                         <BookOpen className="w-6 h-6 text-blue-400" />
                       </div>
-                      <h4 className="text-lg font-semibold mb-2 group-hover:text-blue-400 transition-colors">View My Stories</h4>
-                      <p className="text-gray-400 text-sm">Continue your existing adventures</p>
+                      <h4 className="text-lg font-semibold mb-2 text-blue-100 group-hover:text-blue-300 transition-colors">View My Stories</h4>
+                      <p className="text-blue-300/80 text-sm">Continue your existing adventures</p>
                     </CardContent>
                   </Card>
                 </CyberCard>
@@ -283,8 +283,8 @@ export default function HomePage() {
                       S
                     </div>
                     <div>
-                      <p className="font-semibold">Sarah Chen</p>
-                      <p className="text-gray-400 text-sm">Fantasy Author</p>
+                      <p className="font-semibold text-white">Sarah Chen</p>
+                      <p className="text-gray-300 text-sm">Fantasy Author</p>
                     </div>
                   </div>
                 </CardContent>
@@ -312,8 +312,8 @@ export default function HomePage() {
                       M
                     </div>
                     <div>
-                      <p className="font-semibold">Marcus Rodriguez</p>
-                      <p className="text-gray-400 text-sm">Screenwriter</p>
+                      <p className="font-semibold text-white">Marcus Rodriguez</p>
+                      <p className="text-gray-300 text-sm">Screenwriter</p>
                     </div>
                   </div>
                 </CardContent>
