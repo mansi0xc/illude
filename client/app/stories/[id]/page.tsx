@@ -340,6 +340,37 @@ export default function StoryReaderPage() {
           </div>
         </div>
       </div>
+      
+      {/* Floating Navigation */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="flex flex-col gap-3">
+          <Link href={`/stories/${story._id}/continue`}>
+            <Button 
+              className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-black shadow-lg shadow-emerald-500/25 flex items-center justify-center"
+              title="Continue Story"
+            >
+              <Plus className="w-6 h-6" />
+            </Button>
+          </Link>
+          <Link href="/stories">
+            <Button 
+              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25 flex items-center justify-center"
+              title="All Stories"
+            >
+              <BookOpen className="w-6 h-6" />
+            </Button>
+          </Link>
+          <Link href="/">
+            <Button 
+              variant="outline"
+              className="w-14 h-14 rounded-full border-gray-700 bg-gray-900/90 hover:bg-gray-800 text-gray-300 shadow-lg flex items-center justify-center backdrop-blur-sm"
+              title="Home"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 } 

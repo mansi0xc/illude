@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Zap, BookOpen, Users, ArrowRight, Play, Star } from "lucide-react"
+import RotatingCards from "@/components/ui/rotating-cards"
 
 export default function HomePage() {
   return (
@@ -26,12 +27,26 @@ export default function HomePage() {
               <a href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 My Stories
               </a>
-              <Button
-                variant="outline"
-                className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 bg-transparent"
-              >
-                Sign In
-              </Button>
+              <a href="/story-generator">
+                <Button
+                  variant="outline"
+                  className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 bg-transparent"
+                >
+                  Create Story
+                </Button>
+              </a>
+            </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <a href="/story-generator">
+                <Button
+                  size="sm"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold"
+                >
+                  Create
+                </Button>
+              </a>
             </div>
           </div>
         </div>
@@ -51,6 +66,12 @@ export default function HomePage() {
               <span className="block text-emerald-400">Imagination</span>
               to Life
             </h1>
+            
+            {/* 3D Rotating Cards */}
+            <div className="my-12">
+              <RotatingCards />
+            </div>
+            
             <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
               Illude is an AI-powered interactive story generator that crafts evolving narratives in real-time. You're
               the creative director, and AI is your loyal scribe.
@@ -124,6 +145,36 @@ export default function HomePage() {
                 </p>
               </CardContent>
             </Card>
+          </div>
+          
+          {/* Quick Navigation */}
+          <div className="mt-16 text-center">
+            <h3 className="text-2xl font-bold mb-8 text-emerald-400">Quick Start</h3>
+            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              <a href="/story-generator" className="block">
+                <Card className="bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-emerald-500/30 transition-colors">
+                      <Play className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <h4 className="text-lg font-semibold mb-2 group-hover:text-emerald-400 transition-colors">Create New Story</h4>
+                    <p className="text-gray-400 text-sm">Start crafting your epic narrative</p>
+                  </CardContent>
+                </Card>
+              </a>
+              
+              <a href="/stories" className="block">
+                <Card className="bg-blue-500/5 border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 group cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:bg-blue-500/30 transition-colors">
+                      <BookOpen className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <h4 className="text-lg font-semibold mb-2 group-hover:text-blue-400 transition-colors">View My Stories</h4>
+                    <p className="text-gray-400 text-sm">Continue your existing adventures</p>
+                  </CardContent>
+                </Card>
+              </a>
+            </div>
           </div>
         </div>
       </section>

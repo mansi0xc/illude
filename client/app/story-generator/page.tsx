@@ -460,12 +460,18 @@ export default function StoryGenerator() {
                       </div>
                     )}
                     
-                    <div className="text-center">
+                    <div className="text-center space-y-4">
                       <Link href="/stories">
-                        <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+                        <Button variant="outline" className="w-full border-gray-700 text-gray-300 hover:bg-gray-800">
                           <BookOpen className="w-4 h-4 mr-2" />
                           View All Stories
                           <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                      <Link href="/">
+                        <Button variant="outline" className="w-full border-emerald-700 text-emerald-300 hover:bg-emerald-800/20">
+                          <ArrowLeft className="w-4 h-4 mr-2" />
+                          Back to Home
                         </Button>
                       </Link>
                     </div>
@@ -476,14 +482,52 @@ export default function StoryGenerator() {
                       <BookOpen className="w-8 h-8 text-emerald-400" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-300 mb-2">Your Story Awaits</h3>
-                    <p className="text-gray-400 max-w-sm">
+                    <p className="text-gray-400 max-w-sm mb-6">
                       Fill in the story details and click "Generate First Chapter" to see your narrative come to life.
                     </p>
+                    
+                    <div className="flex gap-3">
+                      <Link href="/stories">
+                        <Button variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+                          <BookOpen className="w-4 h-4 mr-2" />
+                          View Stories
+                        </Button>
+                      </Link>
+                      <Link href="/">
+                        <Button variant="outline" size="sm" className="border-emerald-700 text-emerald-300 hover:bg-emerald-800/20">
+                          <ArrowLeft className="w-4 h-4 mr-2" />
+                          Home
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
+        </div>
+      </div>
+      
+      {/* Floating Navigation */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="flex flex-col gap-3">
+          <Link href="/stories">
+            <Button 
+              className="w-14 h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25 flex items-center justify-center"
+              title="View All Stories"
+            >
+              <BookOpen className="w-6 h-6" />
+            </Button>
+          </Link>
+          <Link href="/">
+            <Button 
+              variant="outline"
+              className="w-14 h-14 rounded-full border-gray-700 bg-gray-900/90 hover:bg-gray-800 text-gray-300 shadow-lg flex items-center justify-center backdrop-blur-sm"
+              title="Home"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
