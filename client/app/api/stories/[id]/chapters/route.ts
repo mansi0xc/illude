@@ -1,7 +1,23 @@
 import { NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongodb"
-import { Story } from "@/lib/models"
+import { Story, ICharacter } from "@/lib/models"
 import { generate } from "@/functions/generate"
+
+interface CharacterArc {
+  characterName: string;
+  developments: string[];
+  currentState: string;
+}
+
+interface Chapter {
+  chapterNumber: number;
+  title: string;
+  content: string;
+  userDirection: string;
+  aiSummary: string;
+  keyEvents: string[];
+  charactersInvolved: string[];
+}
 
 // POST /api/stories/[id]/chapters - Generate new chapter
 export async function POST(
@@ -25,6 +41,51 @@ export async function POST(
     
     const nextChapterNumber = story.chapters.length + 1
     
+    // Analyze the previous chapter's ending for continuity
+    let previousChapterAnalysis = null
+    let lastChapterContent = ''
+    
+    if (story.chapters.length > 0) {
+      const lastChapter = story.chapters[story.chapters.length - 1]
+      lastChapterContent = lastChapter.content
+      
+      // Analyze the ending of the previous chapter
+      const endingAnalysisPrompt = `
+Analyze the ending of this chapter to determine how the next chapter should begin:
+
+CHAPTER CONTENT:
+${lastChapterContent}
+
+Please provide a JSON response with:
+{
+  "endingType": "cliffhanger" | "natural_conclusion" | "scene_transition" | "action_sequence" | "dialogue_pause" | "emotional_moment",
+  "lastScene": "Brief description of the final scene/moment",
+  "activeElements": ["ongoing actions", "unresolved tensions", "immediate situations"],
+  "continuityNeeds": "immediate_continuation" | "scene_break" | "time_skip_allowed" | "location_change",
+  "tonalState": "tense" | "calm" | "emotional" | "action-packed" | "mysterious" | "romantic" | "dramatic",
+  "immediateQuestions": ["What happens next?", "How will character react?"],
+  "suggestedOpening": "Brief suggestion for how next chapter should open"
+}
+`
+      
+      try {
+        const endingAnalysis = await generate(endingAnalysisPrompt)
+        const jsonMatch = endingAnalysis.match(/\{[\s\S]*\}/)
+        if (jsonMatch) {
+          previousChapterAnalysis = JSON.parse(jsonMatch[0])
+        }
+      } catch (error) {
+        console.error('Error analyzing previous chapter ending:', error)
+        // Fallback analysis
+        previousChapterAnalysis = {
+          endingType: "natural_conclusion",
+          continuityNeeds: "scene_break",
+          tonalState: "neutral",
+          suggestedOpening: "Continue the story naturally"
+        }
+      }
+    }
+    
     // Build context for AI generation
     const storyContext = {
       title: story.title,
@@ -44,7 +105,7 @@ export async function POST(
       memory: story.memory
     }
     
-    // Create memory context string
+    // Create enhanced memory context string with continuity analysis
     const memoryContext = `
 STORY MEMORY AND CONTINUITY:
 - Plot Points: ${story.memory.plotPoints.join(', ')}
@@ -55,15 +116,76 @@ STORY MEMORY AND CONTINUITY:
 - Foreshadowing Elements: ${story.memory.foreshadowing.join(', ')}
 
 CHARACTER ARCS:
-${story.memory.characterArcs.map(arc => 
+${story.memory.characterArcs.map((arc: CharacterArc) => 
   `${arc.characterName}: Current State - ${arc.currentState}, Developments - ${arc.developments.join(', ')}`
 ).join('\n')}
 
 PREVIOUS CHAPTERS SUMMARY:
-${story.chapters.map(chapter => 
+${story.chapters.map((chapter: Chapter) => 
   `Chapter ${chapter.chapterNumber}: ${chapter.aiSummary || 'Key events: ' + chapter.keyEvents?.join(', ')}`
 ).join('\n')}
+
+${previousChapterAnalysis ? `
+PREVIOUS CHAPTER ENDING ANALYSIS:
+- Ending Type: ${previousChapterAnalysis.endingType}
+- Last Scene: ${previousChapterAnalysis.lastScene || 'Not specified'}
+- Active Elements: ${previousChapterAnalysis.activeElements?.join(', ') || 'None'}
+- Continuity Needs: ${previousChapterAnalysis.continuityNeeds}
+- Tonal State: ${previousChapterAnalysis.tonalState}
+- Immediate Questions: ${previousChapterAnalysis.immediateQuestions?.join(', ') || 'None'}
+- Suggested Opening: ${previousChapterAnalysis.suggestedOpening}
+
+${lastChapterContent ? `
+LAST CHAPTER'S FINAL PARAGRAPHS (for direct reference):
+${lastChapterContent.split('\n').slice(-5).join('\n')}
+` : ''}
+` : 'This is the first chapter.'}
     `
+    
+    // Generate continuity instructions based on analysis
+    let continuityInstructions = ''
+    if (previousChapterAnalysis) {
+      switch (previousChapterAnalysis.continuityNeeds) {
+        case 'immediate_continuation':
+          continuityInstructions = `
+CRITICAL CONTINUITY REQUIREMENTS:
+- Begin IMMEDIATELY where the previous chapter ended
+- Pick up the exact scene, moment, or action that was left unresolved
+- Maintain the same characters, location, and immediate situation
+- Address the immediate questions or tensions from the cliffhanger
+- Keep the same tonal energy and pacing
+- DO NOT skip time or change locations unless absolutely necessary for the immediate action
+`
+          break
+        case 'scene_break':
+          continuityInstructions = `
+CONTINUITY REQUIREMENTS:
+- You may begin with a brief scene break or transition
+- Address the consequences or follow-up to the previous chapter's ending
+- Maintain logical story flow while allowing for natural pacing
+- Keep character states and story momentum consistent
+`
+          break
+        case 'time_skip_allowed':
+          continuityInstructions = `
+CONTINUITY REQUIREMENTS:
+- A time skip is acceptable but should be logical and purposeful
+- Reference or show consequences of previous chapter's events
+- Maintain character development and story arc progression
+- Ensure any time gap feels natural to the story
+`
+          break
+        case 'location_change':
+          continuityInstructions = `
+CONTINUITY REQUIREMENTS:
+- Location change is acceptable but maintain story and character continuity
+- Show logical connection to previous chapter's events
+- Keep character states and emotional momentum consistent
+- Ensure the transition feels natural and purposeful
+`
+          break
+      }
+    }
     
     // Generate chapter based on type
     let prompt = ''
@@ -74,6 +196,8 @@ You are continuing a story. This is Chapter ${nextChapterNumber}.
 
 ${memoryContext}
 
+${continuityInstructions}
+
 STORY CONTEXT:
 ${JSON.stringify(storyContext, null, 2)}
 
@@ -81,7 +205,8 @@ USER DIRECTION: ${userDirection}
 
 Your task:
 - Write Chapter ${nextChapterNumber} following the user's direction: "${userDirection}"
-- Maintain consistency with previous chapters and story memory
+- At the very beginning of the chapter, start with "## Chapter ${nextChapterNumber}: <appropriate chapter title>"
+- MAINTAIN STRICT CONTINUITY with the previous chapter's ending
 - Develop character arcs naturally
 - Advance the plot meaningfully
 - Keep the tone and style consistent
@@ -90,6 +215,9 @@ Your task:
 - End with a natural transition point
 
 Remember to:
+- ${previousChapterAnalysis?.continuityNeeds === 'immediate_continuation' ? 
+    'Continue DIRECTLY from where the previous chapter left off' : 
+    'Maintain logical story flow and address previous chapter\'s consequences'}
 - Reference previous events when relevant
 - Show character growth based on their arcs
 - Maintain world consistency
@@ -102,13 +230,16 @@ You are continuing a story. This is Chapter ${nextChapterNumber}.
 
 ${memoryContext}
 
+${continuityInstructions}
+
 STORY CONTEXT:
 ${JSON.stringify(storyContext, null, 2)}
 
 Your task:
 - Write Chapter ${nextChapterNumber} that naturally progresses the story
+- At the very beginning of the chapter, start with "## Chapter ${nextChapterNumber}: <appropriate chapter title>"
+- MAINTAIN STRICT CONTINUITY with the previous chapter's ending
 - Decide on the best direction for the plot based on established elements
-- Maintain consistency with previous chapters and story memory
 - Develop character arcs naturally
 - Advance existing conflicts or introduce new meaningful developments
 - Keep the tone and style consistent
@@ -116,6 +247,9 @@ Your task:
 - End with a natural transition point or cliffhanger
 
 Remember to:
+- ${previousChapterAnalysis?.continuityNeeds === 'immediate_continuation' ? 
+    'Continue DIRECTLY from where the previous chapter left off' : 
+    'Maintain logical story flow and address previous chapter\'s consequences'}
 - Build on established plot points and character developments
 - Reference previous events when relevant
 - Show character growth based on their arcs
@@ -169,7 +303,7 @@ Please provide a JSON response with:
       analysisData = {
         summary: `Chapter ${nextChapterNumber} continues the story`,
         keyEvents: [],
-        charactersInvolved: story.characters.map(c => c.name),
+        charactersInvolved: story.characters.map((c: ICharacter) => c.name),
         newPlotPoints: [],
         characterDevelopments: [],
         worldStateChanges: [],
@@ -197,7 +331,7 @@ Please provide a JSON response with:
         ...story.memory.plotPoints,
         ...(analysisData.newPlotPoints || [])
       ],
-      characterArcs: story.memory.characterArcs.map(arc => {
+      characterArcs: story.memory.characterArcs.map((arc: CharacterArc) => {
         const development = analysisData.characterDevelopments?.find(
           (dev: any) => dev.character === arc.characterName
         )
@@ -219,7 +353,7 @@ Please provide a JSON response with:
         ...(analysisData.keyEvents || [])
       ],
       conflicts: [
-        ...story.memory.conflicts.filter(c => 
+        ...story.memory.conflicts.filter((c: string) => 
           !analysisData.resolvedConflicts?.includes(c)
         ),
         ...(analysisData.newConflicts || [])
