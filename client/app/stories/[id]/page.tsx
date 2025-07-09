@@ -7,6 +7,12 @@ import { Badge } from "@/components/ui/badge"
 import { Sparkles, BookOpen, ArrowLeft, Plus, Users, Settings, Clock, Edit, ChevronRight, ChevronLeft, List, X } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import localFont from "next/font/local"
+
+const mySoul = localFont({
+  src: 'MySoul-Regular.ttf',
+  display: 'swap',
+})
 
 interface Chapter {
   chapterNumber: number
@@ -395,7 +401,7 @@ export default function StoryReaderPage() {
                     // Check if line starts with ##
                     if (line.trim().startsWith('## ')) {
                       return (
-                        <div key={lineIndex} className="chapter-heading">
+                        <div key={lineIndex} className={`chapter-heading ${mySoul.className}`}>
                           {line.trim().replace(/^## /, '')}
                         </div>
                       )
