@@ -4,9 +4,10 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, BookOpen, ArrowLeft, Wand2, Edit, Eye, Users, Settings, Bot, User } from "lucide-react"
+import { Sparkles, BookOpen, ArrowLeft, Wand2, Edit, Eye, Users, Settings, Bot, User, Lock, LogIn } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useSession, signIn } from "next-auth/react"
 
 interface Chapter {
   chapterNumber: number
@@ -24,6 +25,9 @@ interface StoryData {
   _id: string
   title: string
   description: string
+  userId: string
+  userEmail: string
+  userName?: string
   characters: { name: string; personality?: string; goals?: string }[]
   chapters: Chapter[]
   memory: {
@@ -37,6 +41,7 @@ interface StoryData {
 }
 
 export default function ContinueStoryPage() {
+  const { data: session, status } = useSession()
   const [story, setStory] = useState<StoryData | null>(null)
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
@@ -48,15 +53,25 @@ export default function ContinueStoryPage() {
   const params = useParams()
 
   useEffect(() => {
-    if (params.id) {
+    if (status === 'loading') return // Still loading
+    if (status === 'unauthenticated') {
+      setLoading(false)
+      return
+    }
+    if (params.id && session) {
       fetchStory(params.id as string)
     }
-  }, [params.id])
+  }, [params.id, session, status])
 
   const fetchStory = async (storyId: string) => {
     try {
       const response = await fetch(`/api/stories/${storyId}`)
       const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch story')
+      }
+      
       setStory(data.story)
     } catch (error) {
       console.error('Error fetching story:', error)
@@ -111,7 +126,7 @@ export default function ContinueStoryPage() {
     }
   }
 
-  if (loading) {
+  if (loading || status === 'loading') {
     return (
       <div className="min-h-screen bg-black text-white">
         <div className="flex items-center justify-center min-h-[400px]">
@@ -120,6 +135,32 @@ export default function ContinueStoryPage() {
               <Sparkles className="w-8 h-8 text-emerald-400 animate-spin" />
             </div>
             <p className="text-gray-400">Loading your story...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="text-center py-20">
+          <div className="max-w-md mx-auto">
+            <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <LogIn className="w-10 h-10 text-black" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Sign In Required</h3>
+            <p className="text-gray-400 mb-8">
+              Please sign in to continue writing your story.
+            </p>
+            <Button 
+              onClick={() => signIn('google')}
+              size="lg"
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              Sign In with Google
+            </Button>
           </div>
         </div>
       </div>
@@ -144,6 +185,39 @@ export default function ContinueStoryPage() {
                 Back to Stories
               </Button>
             </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Check if user owns this story
+  if (story.userId !== session?.user?.id) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="text-center py-20">
+          <div className="max-w-md mx-auto">
+            <div className="w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-10 h-10 text-black" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Access Denied</h3>
+            <p className="text-gray-400 mb-8">
+              You can only continue stories that you have created. This story belongs to someone else.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Link href={`/stories/${story._id}`}>
+                <Button size="lg" variant="outline">
+                  <Eye className="w-5 h-5 mr-2" />
+                  Read Only
+                </Button>
+              </Link>
+              <Link href="/stories">
+                <Button size="lg">
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  My Stories
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

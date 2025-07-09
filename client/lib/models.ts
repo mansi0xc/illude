@@ -46,6 +46,9 @@ const ChapterSchema = new mongoose.Schema({
 const StorySchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, default: '' },
+  userId: { type: String, required: true }, // Google user ID
+  userEmail: { type: String, required: true }, // User email for identification
+  userName: { type: String, default: '' }, // User display name
   characters: [CharacterSchema],
   settings: { type: String, default: '' },
   worldbuilding: [{ type: String }],
@@ -75,8 +78,28 @@ StorySchema.pre('save', function(next) {
   next()
 })
 
+// User Schema
+const UserSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true }, // Google user ID
+  email: { type: String, required: true, unique: true },
+  name: { type: String, default: '' },
+  username: { type: String, default: '' },
+  profilePhoto: { type: String, default: '' }, // URL to profile photo
+  joinedAt: { type: Date, default: Date.now },
+  bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
+  createdStories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
+  lastActive: { type: Date, default: Date.now },
+})
+
+// Update lastActive on save
+UserSchema.pre('save', function(next) {
+  this.lastActive = new Date()
+  next()
+})
+
 // Export models
 export const Story = mongoose.models.Story || mongoose.model('Story', StorySchema)
+export const User = mongoose.models.User || mongoose.model('User', UserSchema)
 export const Chapter = mongoose.models.Chapter || mongoose.model('Chapter', ChapterSchema)
 
 // Types for TypeScript
@@ -119,10 +142,26 @@ export interface IChapter {
   createdAt?: Date
 }
 
+export interface IUser {
+  _id?: string
+  id: string // Google user ID
+  email: string
+  name?: string
+  username?: string
+  profilePhoto?: string
+  joinedAt?: Date
+  bookmarks?: string[] // Story IDs
+  createdStories?: string[] // Story IDs
+  lastActive?: Date
+}
+
 export interface IStory {
   _id?: string
   title: string
   description?: string
+  userId: string
+  userEmail: string
+  userName?: string
   characters: ICharacter[]
   settings?: string
   worldbuilding?: string[]

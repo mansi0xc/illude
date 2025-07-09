@@ -4,13 +4,17 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, BookOpen, Eye, Trash2, Plus, ArrowLeft, Clock, FileText } from "lucide-react"
+import { Sparkles, BookOpen, Eye, Trash2, Plus, ArrowLeft, Clock, FileText, LogIn, Bookmark, BookmarkCheck } from "lucide-react"
 import Link from "next/link"
+import { useSession, signIn } from "next-auth/react"
 
 interface StoryPreview {
   _id: string
   title: string
   description: string
+  userId: string
+  userEmail: string
+  userName?: string
   status: 'draft' | 'active' | 'completed' | 'paused'
   lastUpdated: string
   createdAt: string
@@ -18,19 +22,43 @@ interface StoryPreview {
 }
 
 export default function StoriesPage() {
+  const { data: session, status } = useSession()
   const [stories, setStories] = useState<StoryPreview[]>([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [bookmarkedStories, setBookmarkedStories] = useState<Set<string>>(new Set())
+  const [bookmarkingStory, setBookmarkingStory] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchStories()
-  }, [])
+    if (status === 'loading') return // Still loading
+    if (status === 'unauthenticated') {
+      setLoading(false)
+      return
+    }
+    if (session) {
+      fetchStories()
+    }
+  }, [session, status])
 
   const fetchStories = async () => {
     try {
-      const response = await fetch('/api/stories')
-      const data = await response.json()
-      setStories(data.stories || [])
+      const [storiesResponse, bookmarksResponse] = await Promise.all([
+        fetch('/api/stories'),
+        fetch('/api/user/bookmarks')
+      ])
+      
+      const storiesData = await storiesResponse.json()
+      const bookmarksData = await bookmarksResponse.json()
+      
+      if (!storiesResponse.ok) {
+        throw new Error(storiesData.error || 'Failed to fetch stories')
+      }
+      
+      setStories(storiesData.stories || [])
+      
+      if (bookmarksResponse.ok && bookmarksData.bookmarks) {
+        setBookmarkedStories(new Set(bookmarksData.bookmarks.map((id: string) => id.toString())))
+      }
     } catch (error) {
       console.error('Error fetching stories:', error)
     } finally {
@@ -61,6 +89,41 @@ export default function StoriesPage() {
     }
   }
 
+  const toggleBookmark = async (storyId: string) => {
+    if (!session?.user?.id) return
+    
+    setBookmarkingStory(storyId)
+    try {
+      const isBookmarked = bookmarkedStories.has(storyId)
+      const response = await fetch('/api/user/bookmarks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storyId,
+          action: isBookmarked ? 'remove' : 'add'
+        }),
+      })
+
+      if (response.ok) {
+        const newBookmarked = new Set(bookmarkedStories)
+        if (isBookmarked) {
+          newBookmarked.delete(storyId)
+        } else {
+          newBookmarked.add(storyId)
+        }
+        setBookmarkedStories(newBookmarked)
+      } else {
+        console.error('Failed to toggle bookmark')
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error)
+    } finally {
+      setBookmarkingStory(null)
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -82,7 +145,7 @@ export default function StoriesPage() {
     })
   }
 
-  if (loading) {
+  if (loading || status === 'loading') {
     return (
       <div className="min-h-screen bg-black text-white">
         <nav className="border-b border-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
@@ -111,6 +174,50 @@ export default function StoriesPage() {
               <Sparkles className="w-8 h-8 text-emerald-400 animate-spin" />
             </div>
             <p className="text-gray-400">Loading your stories...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <nav className="border-b border-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-2">
+                <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                  <ArrowLeft className="w-5 h-5 text-emerald-400" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-black" />
+                  </div>
+                  <span className="text-xl font-bold">Illude</span>
+                </Link>
+              </div>
+              <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                <BookOpen className="w-3 h-3 mr-1" />
+                My Stories
+              </Badge>
+            </div>
+          </div>
+        </nav>
+
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-white mb-4">Sign In Required</h2>
+            <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
+              Please sign in with your Google account to view and manage your personal stories.
+            </p>
+            <Button 
+              onClick={() => signIn('google')}
+              size="lg"
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              Sign In with Google
+            </Button>
           </div>
         </div>
       </div>
@@ -183,54 +290,72 @@ export default function StoriesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stories.map((story) => (
               <Card key={story._id} className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start mb-3">
                     <Badge className={getStatusColor(story.status)}>
                       {story.status.charAt(0).toUpperCase() + story.status.slice(1)}
                     </Badge>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => deleteStory(story._id)}
-                      disabled={deleting === story._id}
-                    >
-                      {deleting === story._id ? (
-                        <Sparkles className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-4 h-4" />
-                      )}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-emerald-400"
+                        onClick={() => toggleBookmark(story._id)}
+                        disabled={bookmarkingStory === story._id}
+                        title={bookmarkedStories.has(story._id) ? "Remove bookmark" : "Bookmark story"}
+                      >
+                        {bookmarkingStory === story._id ? (
+                          <Sparkles className="w-4 h-4 animate-spin" />
+                        ) : bookmarkedStories.has(story._id) ? (
+                          <BookmarkCheck className="w-4 h-4" />
+                        ) : (
+                          <Bookmark className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => deleteStory(story._id)}
+                        disabled={deleting === story._id}
+                      >
+                        {deleting === story._id ? (
+                          <Sparkles className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                  <CardTitle className="text-xl text-white group-hover:text-emerald-400 transition-colors">
+                  <CardTitle className="text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight">
                     {story.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-gray-400 text-sm line-clamp-3">
+                  <p className="text-gray-300 text-sm line-clamp-3 leading-relaxed">
                     {story.description || 'No description available'}
                   </p>
                   
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
-                      <FileText className="w-4 h-4" />
+                      <FileText className="w-3 h-3" />
                       <span>{story.chapters.length} chapter{story.chapters.length !== 1 ? 's' : ''}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-3 h-3" />
                       <span>{formatDate(story.lastUpdated)}</span>
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 pt-2">
                     <Link href={`/stories/${story._id}`} className="flex-1">
-                      <Button className="w-full">
+                      <Button size="sm" className="w-full">
                         <Eye className="w-4 h-4 mr-2" />
                         Read Story
                       </Button>
                     </Link>
                     <Link href={`/stories/${story._id}/continue`} className="flex-1">
-                      <Button variant="outline" className="w-full">
+                      <Button size="sm" variant="outline" className="w-full">
                         <Plus className="w-4 h-4 mr-2" />
                         Continue
                       </Button>

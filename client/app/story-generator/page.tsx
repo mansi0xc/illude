@@ -4,9 +4,10 @@ import { useState, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Plus, Trash2, BookOpen, Users, Zap, Settings, Scroll, Wand2, ArrowLeft, Eye, ArrowRight } from "lucide-react"
+import { Sparkles, Plus, Trash2, BookOpen, Users, Zap, Settings, Scroll, Wand2, ArrowLeft, Eye, ArrowRight, LogIn } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import { useSession, signIn } from "next-auth/react"
 
 interface Character {
   name: string
@@ -36,6 +37,7 @@ interface Story {
 }
 
 function StoryGeneratorContent() {
+  const { data: session, status } = useSession()
   const searchParams = useSearchParams()
   const storyId = searchParams.get('storyId')
   
@@ -134,6 +136,66 @@ function StoryGeneratorContent() {
 
   const inputClass = "w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors"
   const textareaClass = "w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors resize-vertical min-h-[100px]"
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <Sparkles className="w-8 h-8 text-emerald-400 animate-spin" />
+          </div>
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        {/* Navigation */}
+        <nav className="border-b border-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-2">
+                <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                  <ArrowLeft className="w-5 h-5 text-emerald-400" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-black" />
+                  </div>
+                  <span className="text-xl font-bold">Illude</span>
+                </Link>
+              </div>
+              <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                <Wand2 className="w-3 h-3 mr-1" />
+                Story Generator
+              </Badge>
+            </div>
+          </div>
+        </nav>
+
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center max-w-md mx-auto px-4">
+            <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <LogIn className="w-10 h-10 text-black" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Sign In Required</h3>
+            <p className="text-gray-400 mb-8">
+              Please sign in with your Google account to create and manage your stories.
+            </p>
+            <Button 
+              onClick={() => signIn('google')}
+              size="lg"
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              Sign In with Google
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateFirstChapter, Story as StoryInput } from "@/functions/storyInit";
 import connectDB from "@/lib/mongodb";
 import { Story } from "@/lib/models";
+import { getServerAuthSession } from "@/lib/auth-utils";
 
 export async function POST(request: NextRequest) {
     try {
         await connectDB();
+        
+        const session = await getServerAuthSession();
+        
+        if (!session || !session.user) {
+            return NextResponse.json(
+                { error: 'Authentication required' },
+                { status: 401 }
+            );
+        }
         
         const body = await request.json();
         const storyInput: StoryInput = body.story;
@@ -32,6 +42,9 @@ export async function POST(request: NextRequest) {
         // Create and save story with first chapter
         const newStory = new Story({
             ...storyInput,
+            userId: session.user.id,
+            userEmail: session.user.email!,
+            userName: session.user.name || '',
             chapters: [{
                 chapterNumber: 1,
                 content: chapter,

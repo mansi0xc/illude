@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongodb"
 import { Story, IStory } from "@/lib/models"
+import { getServerAuthSession } from "@/lib/auth-utils"
 
-// GET /api/stories - Get all stories
+// GET /api/stories - Get user's stories (requires authentication)
 export async function GET() {
   try {
     await connectDB()
     
-    const stories = await Story.find({})
-      .select('title description status lastUpdated createdAt chapters')
+    const session = await getServerAuthSession()
+    
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+    
+    const stories = await Story.find({ userId: session.user.id })
+      .select('title description userId userEmail userName status lastUpdated createdAt chapters')
       .sort({ lastUpdated: -1 })
     
     return NextResponse.json({ stories })
@@ -25,6 +35,15 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     await connectDB()
+    
+    const session = await getServerAuthSession()
+    
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
     
     const body = await request.json()
     const storyData: Partial<IStory> = body.story
@@ -47,6 +66,9 @@ export async function POST(request: NextRequest) {
     
     const newStory = new Story({
       ...storyData,
+      userId: session.user.id,
+      userEmail: session.user.email!,
+      userName: session.user.name || '',
       chapters: [],
       memory: initialMemory,
       status: 'draft'

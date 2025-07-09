@@ -1,12 +1,16 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Zap, BookOpen, Users, Play, Star } from "lucide-react"
+import { Sparkles, Zap, BookOpen, Users, Play, Star, LogIn, LogOut, User } from "lucide-react"
 import RotatingCards from "@/components/ui/rotating-cards"
 import { CyberCard } from "@/components/ui/cyber-card"
 import Link from "next/link"
+import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function HomePage() {
+  const { data: session } = useSession()
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
@@ -26,23 +30,74 @@ export default function HomePage() {
               <a href="#how-it-works" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 How it Works
               </a>
-              <Link href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
-                My Stories
+              <Link href="/community-works" className="text-gray-300 hover:text-emerald-400 transition-colors">
+                Community Works
               </Link>
-              <a href="/story-generator">
-                <Button variant="outline">
-                  Create Story
+              {session && (
+                <Link href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
+                  My Stories
+                </Link>
+              )}
+              {session ? (
+                <div className="flex items-center space-x-4">
+                  <a href="/story-generator">
+                    <Button variant="outline">
+                      Create Story
+                    </Button>
+                  </a>
+                  <Link href="/profile" className="flex items-center space-x-2 text-gray-300 hover:text-emerald-400 transition-colors">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">{session.user?.name || 'Profile'}</span>
+                  </Link>
+                  <Button
+                    onClick={() => signOut()}
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-300 hover:text-emerald-400"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => signIn('google')}
+                  variant="outline"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
                 </Button>
-              </a>
+              )}
             </div>
             
             {/* Mobile menu button */}
-            <div className="md:hidden">
-              <a href="/story-generator">
-                <Button size="sm">
-                  Create
+            <div className="md:hidden flex items-center space-x-2">
+              {session ? (
+                <>
+                  <a href="/story-generator">
+                    <Button size="sm">
+                      Create
+                    </Button>
+                  </a>
+                  <Button
+                    onClick={() => signOut()}
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-300 hover:text-emerald-400"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={() => signIn('google')}
+                  size="sm"
+                  variant="outline"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
                 </Button>
-              </a>
+              )}
             </div>
           </div>
         </div>

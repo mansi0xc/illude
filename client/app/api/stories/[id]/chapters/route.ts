@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongodb"
 import { Story, ICharacter } from "@/lib/models"
 import { generate } from "@/functions/generate"
+import { getServerAuthSession } from "@/lib/auth-utils"
 
 interface CharacterArc {
   characterName: string;
@@ -19,13 +20,22 @@ interface Chapter {
   charactersInvolved: string[];
 }
 
-// POST /api/stories/[id]/chapters - Generate new chapter
+// POST /api/stories/[id]/chapters - Generate new chapter (owner only)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB()
+    
+    const session = await getServerAuthSession()
+    
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
     
     const { id } = await params
     const body = await request.json()
@@ -36,6 +46,14 @@ export async function POST(
       return NextResponse.json(
         { error: 'Story not found' },
         { status: 404 }
+      )
+    }
+    
+    // Check if user owns the story
+    if (story.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: 'You can only continue your own stories' },
+        { status: 403 }
       )
     }
     

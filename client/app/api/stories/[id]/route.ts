@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongodb"
 import { Story } from "@/lib/models"
+import { getServerAuthSession } from "@/lib/auth-utils"
 
-// GET /api/stories/[id] - Get single story
+// GET /api/stories/[id] - Get single story (public read access)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -68,7 +69,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/stories/[id] - Delete story
+// DELETE /api/stories/[id] - Delete story (owner only)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -76,18 +77,37 @@ export async function DELETE(
   try {
     await connectDB()
     
-    const { id } = await params
-    const deletedStory = await Story.findByIdAndDelete(id)
+    const session = await getServerAuthSession()
     
-    if (!deletedStory) {
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+    
+    const { id } = await params
+    const story = await Story.findById(id)
+    
+    if (!story) {
       return NextResponse.json(
         { error: 'Story not found' },
         { status: 404 }
       )
     }
     
+    // Check if user owns the story
+    if (story.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: 'You can only delete your own stories' },
+        { status: 403 }
+      )
+    }
+    
+    await Story.findByIdAndDelete(id)
+    
     return NextResponse.json({ 
-      message: 'Story deleted successfully'
+      message: 'Story deleted successfully' 
     })
   } catch (error) {
     console.error('Error deleting story:', error)
