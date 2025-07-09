@@ -298,7 +298,7 @@ export default function StoriesPage() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
+                      className="p-1 h-auto hover:bg-red-600 transition-colors"
                       onClick={() => deleteStory(story._id)}
                       disabled={deleting === story._id}
                     >
