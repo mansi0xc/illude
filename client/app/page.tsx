@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="border-b border-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
+      <nav className="border-b border-gray-800/50 backdrop-blur-sm sticky top-0 z-[9999]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
@@ -25,9 +25,9 @@ export default function HomePage() {
               <a href="#how-it-works" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 How it Works
               </a>
-              <span className="text-gray-300 hover:text-emerald-400 transition-colors cursor-pointer">
+              <a href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 My Stories
-              </span>
+              </a>
               <a href="/story-generator">
                 <Button variant="outline">
                   Create Story
@@ -177,7 +177,7 @@ export default function HomePage() {
                 </CyberCard>
               </a>
               
-              <span className="block cursor-pointer">
+              <a href="/stories" className="block">
                 <CyberCard 
                   variant="story"
                   title="STORIES"
@@ -193,7 +193,7 @@ export default function HomePage() {
                     </CardContent>
                   </Card>
                 </CyberCard>
-              </span>
+              </a>
             </div>
           </div>
         </div>
