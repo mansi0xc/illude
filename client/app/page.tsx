@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Sparkles, Zap, BookOpen, Users, Play, Star } from "lucide-react"
 import RotatingCards from "@/components/ui/rotating-cards"
 import { CyberCard } from "@/components/ui/cyber-card"
+import Link from "next/link"
 
 export default function HomePage() {
   return (
@@ -25,9 +26,9 @@ export default function HomePage() {
               <a href="#how-it-works" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 How it Works
               </a>
-              <a href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
+              <Link href="/stories" className="text-gray-300 hover:text-emerald-400 transition-colors">
                 My Stories
-              </a>
+              </Link>
               <a href="/story-generator">
                 <Button variant="outline">
                   Create Story
@@ -177,7 +178,7 @@ export default function HomePage() {
                 </CyberCard>
               </a>
               
-              <a href="/stories" className="block">
+              <Link href="/stories" className="block">
                 <CyberCard 
                   variant="story"
                   title="STORIES"
@@ -193,7 +194,7 @@ export default function HomePage() {
                     </CardContent>
                   </Card>
                 </CyberCard>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
