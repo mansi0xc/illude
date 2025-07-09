@@ -290,76 +290,72 @@ export default function StoriesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stories.map((story) => (
               <Card key={story._id} className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start mb-3">
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-2">
                     <Badge className={getStatusColor(story.status)}>
                       {story.status.charAt(0).toUpperCase() + story.status.slice(1)}
                     </Badge>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-emerald-400"
-                        onClick={() => toggleBookmark(story._id)}
-                        disabled={bookmarkingStory === story._id}
-                        title={bookmarkedStories.has(story._id) ? "Remove bookmark" : "Bookmark story"}
-                      >
-                        {bookmarkingStory === story._id ? (
-                          <Sparkles className="w-4 h-4 animate-spin" />
-                        ) : bookmarkedStories.has(story._id) ? (
-                          <BookmarkCheck className="w-4 h-4" />
-                        ) : (
-                          <Bookmark className="w-4 h-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => deleteStory(story._id)}
-                        disabled={deleting === story._id}
-                      >
-                        {deleting === story._id ? (
-                          <Sparkles className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
+                      onClick={() => deleteStory(story._id)}
+                      disabled={deleting === story._id}
+                    >
+                      {deleting === story._id ? (
+                        <Sparkles className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </Button>
                   </div>
-                  <CardTitle className="text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight">
+                  <CardTitle className="text-xl text-white group-hover:text-emerald-400 transition-colors">
                     {story.title}
                   </CardTitle>
+                  {story.userEmail && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      by {story.userName || story.userEmail.split('@')[0]}
+                    </p>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-gray-300 text-sm line-clamp-3 leading-relaxed">
+                  <p className="text-gray-400 text-sm line-clamp-3">
                     {story.description || 'No description available'}
                   </p>
                   
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
                     <div className="flex items-center gap-1">
-                      <FileText className="w-3 h-3" />
+                      <FileText className="w-4 h-4" />
                       <span>{story.chapters.length} chapter{story.chapters.length !== 1 ? 's' : ''}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="w-4 h-4" />
                       <span>{formatDate(story.lastUpdated)}</span>
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2">
                     <Link href={`/stories/${story._id}`} className="flex-1">
-                      <Button size="sm" className="w-full">
+                      <Button className="w-full">
                         <Eye className="w-4 h-4 mr-2" />
                         Read Story
                       </Button>
                     </Link>
-                    <Link href={`/stories/${story._id}/continue`} className="flex-1">
-                      <Button size="sm" variant="outline" className="w-full">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Continue
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="outline"
+                      className="px-3"
+                      onClick={() => toggleBookmark(story._id)}
+                      disabled={bookmarkingStory === story._id}
+                      title={bookmarkedStories.has(story._id) ? "Remove bookmark" : "Bookmark story"}
+                    >
+                      {bookmarkingStory === story._id ? (
+                        <Sparkles className="w-4 h-4 animate-spin" />
+                      ) : bookmarkedStories.has(story._id) ? (
+                        <BookmarkCheck className="w-4 h-4" />
+                      ) : (
+                        <Bookmark className="w-4 h-4" />
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

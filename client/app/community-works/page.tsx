@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, BookOpen, Eye, Clock, FileText, User, ArrowLeft } from "lucide-react"
+import { Sparkles, BookOpen, Eye, Clock, FileText, ArrowLeft, Bookmark, BookmarkCheck } from "lucide-react"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 
 interface StoryPreview {
   _id: string
@@ -21,22 +22,71 @@ interface StoryPreview {
 }
 
 export default function CommunityWorksPage() {
+  const { data: session } = useSession()
   const [stories, setStories] = useState<StoryPreview[]>([])
   const [loading, setLoading] = useState(true)
+  const [bookmarkedStories, setBookmarkedStories] = useState<Set<string>>(new Set())
+  const [bookmarkingStory, setBookmarkingStory] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchCommunityStories()
-  }, [])
-
-  const fetchCommunityStories = async () => {
+  const fetchCommunityStories = useCallback(async () => {
     try {
-      const response = await fetch('/api/community-stories')
-      const data = await response.json()
-      setStories(data.stories || [])
+      const [storiesResponse, bookmarksResponse] = await Promise.all([
+        fetch('/api/community-stories'),
+        session ? fetch('/api/user/bookmarks') : Promise.resolve(null)
+      ])
+      
+      const storiesData = await storiesResponse.json()
+      setStories(storiesData.stories || [])
+      
+      if (bookmarksResponse) {
+        const bookmarksData = await bookmarksResponse.json()
+        if (bookmarksData.bookmarks) {
+          setBookmarkedStories(new Set(bookmarksData.bookmarks.map((id: string) => id.toString())))
+        }
+      }
     } catch (error) {
       console.error('Error fetching community stories:', error)
     } finally {
       setLoading(false)
+    }
+  }, [session])
+
+  useEffect(() => {
+    fetchCommunityStories()
+  }, [fetchCommunityStories])
+
+  const toggleBookmark = async (storyId: string) => {
+    if (!session?.user?.id) return
+    
+    setBookmarkingStory(storyId)
+    try {
+      const isBookmarked = bookmarkedStories.has(storyId)
+      const response = await fetch('/api/user/bookmarks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storyId,
+          action: isBookmarked ? 'remove' : 'add'
+        }),
+      })
+
+      if (response.ok) {
+        const newBookmarked = new Set(bookmarkedStories)
+        if (isBookmarked) {
+          newBookmarked.delete(storyId)
+        } else {
+          newBookmarked.add(storyId)
+        }
+        setBookmarkedStories(newBookmarked)
+      } else {
+        console.error('Failed to toggle bookmark')
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error)
+    } finally {
+      setBookmarkingStory(null)
     }
   }
 
@@ -132,51 +182,59 @@ export default function CommunityWorksPage() {
                 key={story._id} 
                 className="bg-gray-900/50 border-gray-800 hover:border-emerald-500/30 transition-all duration-300 group"
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-white group-hover:text-emerald-300 transition-colors line-clamp-2">
-                        {story.title}
-                      </CardTitle>
-                      <div className="flex items-center gap-2 mt-2">
-                        <User className="w-3 h-3 text-gray-400" />
-                        <span className="text-xs text-gray-400">
-                          by {getAuthorDisplay(story)}
-                        </span>
-                      </div>
-                    </div>
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-2">
                     <Badge className={getStatusColor(story.status)}>
-                      {story.status}
+                      {story.status.charAt(0).toUpperCase() + story.status.slice(1)}
                     </Badge>
                   </div>
+                  <CardTitle className="text-xl text-white group-hover:text-emerald-400 transition-colors">
+                    {story.title}
+                  </CardTitle>
+                  <p className="text-sm text-gray-500 mt-1">
+                    by {getAuthorDisplay(story)}
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {story.description && (
-                    <p className="text-gray-300 text-sm line-clamp-3">
-                      {story.description}
-                    </p>
-                  )}
+                  <p className="text-gray-400 text-sm line-clamp-3">
+                    {story.description || 'No description available'}
+                  </p>
                   
-                  <div className="flex items-center justify-between text-xs text-gray-400">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <FileText className="w-3 h-3" />
-                        <span>{story.chapters.length} chapters</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        <span>{formatDate(story.lastUpdated)}</span>
-                      </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <FileText className="w-4 h-4" />
+                      <span>{story.chapters.length} chapter{story.chapters.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{formatDate(story.lastUpdated)}</span>
                     </div>
                   </div>
-                  
-                  <div className="flex gap-2 pt-2">
+
+                  <div className="flex gap-2">
                     <Link href={`/stories/${story._id}`} className="flex-1">
-                      <Button size="sm" className="w-full" variant="outline">
+                      <Button className="w-full">
                         <Eye className="w-4 h-4 mr-2" />
                         Read Story
                       </Button>
                     </Link>
+                    {session && (
+                      <Button
+                        variant="outline"
+                        className="px-3"
+                        onClick={() => toggleBookmark(story._id)}
+                        disabled={bookmarkingStory === story._id}
+                        title={bookmarkedStories.has(story._id) ? "Remove bookmark" : "Bookmark story"}
+                      >
+                        {bookmarkingStory === story._id ? (
+                          <Sparkles className="w-4 h-4 animate-spin" />
+                        ) : bookmarkedStories.has(story._id) ? (
+                          <BookmarkCheck className="w-4 h-4" />
+                        ) : (
+                          <Bookmark className="w-4 h-4" />
+                        )}
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
