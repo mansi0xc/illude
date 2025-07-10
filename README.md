@@ -314,7 +314,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
   <h3>🌟 Ready to Create Your Epic Story?</h3>
-  <p><em>Visit <a href="https://localhost:3000">Illude</a> and let your imagination run wild!</em></p>
+  <p><em>Visit <a href="https://illude.vercel.app">Illude</a> and let your imagination run wild!</em></p>
   
   <img src="https://img.shields.io/badge/Made_with-❤️-red?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Powered_by-AI-blue?style=for-the-badge" />
