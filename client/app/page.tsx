@@ -1,9 +1,10 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Zap, BookOpen, Users, Play, Star, LogIn, LogOut, User } from "lucide-react"
+import { Sparkles, Zap, BookOpen, Users, Play, Star, LogIn, LogOut, User, ChevronDown } from "lucide-react"
 import RotatingCards from "@/components/ui/rotating-cards"
 import { CyberCard } from "@/components/ui/cyber-card"
 import Link from "next/link"
@@ -11,6 +12,23 @@ import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function HomePage() {
   const { data: session } = useSession()
+  const [showUserDropdown, setShowUserDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowUserDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
@@ -45,19 +63,40 @@ export default function HomePage() {
                       Create Story
                     </Button>
                   </a>
-                  <Link href="/profile" className="flex items-center space-x-2 text-gray-300 hover:text-emerald-400 transition-colors">
-                    <User className="w-4 h-4" />
-                    <span className="text-sm">{session.user?.name || 'Profile'}</span>
-                  </Link>
-                  <Button
-                    onClick={() => signOut()}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-300 hover:text-emerald-400"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </Button>
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                      className="flex items-center space-x-2 text-gray-300 hover:text-emerald-400 transition-colors focus:outline-none"
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">{session.user?.name || 'Profile'}</span>
+                      <ChevronDown className={`w-3 h-3 transition-transform ${showUserDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                    {showUserDropdown && (
+                      <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+                        <div className="py-1">
+                          <Link 
+                            href="/profile" 
+                            className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-emerald-400 transition-colors"
+                            onClick={() => setShowUserDropdown(false)}
+                          >
+                            <User className="w-4 h-4 mr-3" />
+                            Profile
+                          </Link>
+                          <button
+                            onClick={() => {
+                              setShowUserDropdown(false)
+                              signOut()
+                            }}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-red-400 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4 mr-3" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <Button
@@ -79,14 +118,39 @@ export default function HomePage() {
                       Create
                     </Button>
                   </a>
-                  <Button
-                    onClick={() => signOut()}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-300 hover:text-emerald-400"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </Button>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                      className="flex items-center space-x-1 text-gray-300 hover:text-emerald-400 transition-colors focus:outline-none p-1"
+                    >
+                      <User className="w-4 h-4" />
+                      <ChevronDown className={`w-3 h-3 transition-transform ${showUserDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                    {showUserDropdown && (
+                      <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+                        <div className="py-1">
+                          <Link 
+                            href="/profile" 
+                            className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-emerald-400 transition-colors"
+                            onClick={() => setShowUserDropdown(false)}
+                          >
+                            <User className="w-4 h-4 mr-3" />
+                            Profile
+                          </Link>
+                          <button
+                            onClick={() => {
+                              setShowUserDropdown(false)
+                              signOut()
+                            }}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-red-400 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4 mr-3" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : (
                 <Button
