@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Sparkles, BookOpen, ArrowLeft, Plus, Users, Settings, Clock, Edit, ChevronRight, ChevronLeft, List, X } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useSession } from "next-auth/react"
 import localFont from "next/font/local"
 
 const mySoul = localFont({
@@ -42,6 +43,9 @@ interface StoryData {
   _id: string
   title: string
   description: string
+  userId: string
+  userEmail: string
+  userName?: string
   characters: Character[]
   settings: string
   worldbuilding: string[]
@@ -67,6 +71,7 @@ interface StoryData {
 }
 
 export default function StoryReaderPage() {
+  const { data: session } = useSession()
   const [story, setStory] = useState<StoryData | null>(null)
   const [loading, setLoading] = useState(true)
   const [showDetails, setShowDetails] = useState(false)
@@ -133,6 +138,9 @@ export default function StoryReaderPage() {
   const isFirstChapter = currentChapterIndex === 0
   const isLastChapter = story ? currentChapterIndex === story.chapters.length - 1 : false
   const currentChapter = story?.chapters[currentChapterIndex]
+  
+  // Check if the current user owns this story
+  const isOwner = session?.user?.id && story?.userId === session.user.id
 
   if (loading) {
     return (
@@ -202,7 +210,7 @@ export default function StoryReaderPage() {
                 <List className="w-4 h-4 mr-2" />
                 Chapters
               </Button>
-              {isLastChapter && (
+              {isLastChapter && isOwner && (
                 <Link href={`/stories/${story._id}/continue`}>
                   <Button>
                     <Plus className="w-4 h-4 mr-2" />
@@ -468,13 +476,17 @@ export default function StoryReaderPage() {
                     Next Chapter
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-                ) : (
+                ) : isOwner ? (
                   <Link href={`/stories/${story._id}/continue`} className="flex-1 ml-4">
                     <Button className="w-full">
                       <Plus className="w-4 h-4 mr-2" />
                       Continue Story
                     </Button>
                   </Link>
+                ) : (
+                  <div className="flex-1 ml-4 flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">End of Story</span>
+                  </div>
                 )}
               </div>
             </CardContent>
