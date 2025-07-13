@@ -229,7 +229,7 @@ export default function StoryReaderPage() {
           <Card className="bg-gray-900/95 border-gray-800 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <List className="w-5 h-5 text-emerald-400" />
                   Table of Contents
                 </CardTitle>
